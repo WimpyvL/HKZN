@@ -1,0 +1,80 @@
+/* Print styles */
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+    
+    body {
+        margin: 20mm;
+    }
+    
+    body * {
+        visibility: hidden;
+    }
+    
+    #invoice,
+    #invoice * {
+        visibility: visible;
+    }
+    
+    #invoice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+        padding: 20mm;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Service card hover effects */
+.service-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Progress bar animation */
+.progress-step {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Invoice styles */
+.invoice-page {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+.invoice-content {
+    padding: 2rem;
+}
+
+@media screen and (min-width: 1024px) {
+    .invoice-content {
+        padding: 3rem;
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .flex-grow.flex.items-stretch {
+        flex-direction: column;
+    }
+
+    #mainContent {
+        order: 1;
+    }
+
+    #invoice {
+        order: 2;
+    }
+}
