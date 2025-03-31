@@ -1,36 +1,22 @@
-
-import React, { useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
-import Layout from "../components/layout/Layout";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Layout from '@/components/layout/Layout'; // Assuming Layout provides header/footer
+import { Button } from '@/components/ui/button';
+import { AlertTriangle } from 'lucide-react';
 
 const NotFound: React.FC = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
-
   return (
     <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="text-center max-w-xl px-4">
-          <h1 className="text-7xl font-bold text-hosting-orange mb-6 animate-fade-up">404</h1>
-          <h2 className="text-3xl font-semibold text-hosting-dark-gray mb-4 animate-fade-up animate-delay-100">
-            Page Not Found
-          </h2>
-          <p className="text-hosting-medium-gray mb-8 animate-fade-up animate-delay-200">
-            We're sorry, but the page you're looking for doesn't exist or has been moved.
-          </p>
-          <div className="animate-fade-up animate-delay-300">
-            <Button asChild size="lg" className="bg-hosting-orange hover:bg-hosting-orange/90 text-white">
-              <Link to="/">Return to Home</Link>
-            </Button>
-          </div>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center px-4"> {/* Adjust min-height based on header/footer */}
+        <AlertTriangle className="w-16 h-16 text-hosting-orange mb-4" />
+        <h1 className="text-4xl md:text-6xl font-bold text-hosting-dark-gray mb-2">404</h1>
+        <h2 className="text-2xl md:text-3xl font-semibold text-hosting-medium-gray mb-4">Page Not Found</h2>
+        <p className="text-hosting-medium-gray mb-8 max-w-md">
+          Oops! The page you are looking for does not exist. It might have been moved or deleted.
+        </p>
+        <Button asChild>
+          <Link to="/">Go Back Home</Link>
+        </Button>
       </div>
     </Layout>
   );
