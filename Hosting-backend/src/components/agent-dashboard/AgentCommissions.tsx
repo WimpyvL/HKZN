@@ -1,18 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useStore } from "@/lib/store";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
-import {
-  DollarSign,
-  Calendar,
-  Download,
-  BarChart,
-  PieChart,
-  TrendingUp,
-} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,391 +8,225 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+// import { useStore } from "@/lib/store"; // Remove useStore
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, AlertCircle } from 'lucide-react';
+
+// Define types locally
+interface Transaction {
+  id: string | number;
+  date: string;
+  client_id?: string | number | null; // Use client_id
+  clientName?: string; // Mapped later
+  product_id?: string | number | null; // Use product_id
+  product?: string; // Mapped later
+  amount: number;
+  commission: number;
+  status: "completed" | "pending" | "failed" | "refunded";
+}
+
+interface CommissionPayout {
+  id: string | number;
+  agent_id: string | number;
+  amount: number;
+  period: string;
+  status: "pending" | "processed" | "failed";
+  payment_date?: string | null;
+}
 
 const AgentCommissions = () => {
-  const { currentUser, transactions } = useStore();
-  const navigate = useNavigate();
-  const [periodFilter, setPeriodFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [commissionStats, setCommissionStats] = useState({
-    total: 0,
-    pending: 0,
-    completed: 0,
-    thisMonth: 0,
-    lastMonth: 0,
-  });
+  // const { currentUser, transactions, commissionPayouts } = useStore(); // Remove useStore
 
-  // Redirect if not authenticated or not an agent
-  useEffect(() => {
-    if (!currentUser) {
-      navigate("/login");
-    } else if (currentUser.role !== "agent") {
-      navigate("/");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [payouts, setPayouts] = useState<CommissionPayout[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // TODO: Get current agent's ID
+  const currentAgentId = "AGENT_ID_PLACEHOLDER"; // Replace with actual agent ID logic
+
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // Fetch transactions and payouts
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [transactionsRes, payoutsRes] = await Promise.all([
+        fetch(`${apiBaseUrl}/get_transactions.php`), // Fetch all transactions for now
+        fetch(`${apiBaseUrl}/get_commission_payouts.php`) // Fetch all payouts for now
+      ]);
+
+      if (!transactionsRes.ok) throw new Error(`Failed to fetch transactions: ${transactionsRes.status}`);
+      if (!payoutsRes.ok) throw new Error(`Failed to fetch payouts: ${payoutsRes.status}`);
+
+      const transactionsResult = await transactionsRes.json();
+      const payoutsResult = await payoutsRes.json();
+
+      if (!transactionsResult.success) throw new Error(transactionsResult.message || 'Failed to fetch transactions.');
+      if (!payoutsResult.success) throw new Error(payoutsResult.message || 'Failed to fetch payouts.');
+
+      // Filter data for the current agent
+      const agentTransactions = Array.isArray(transactionsResult.data)
+        ? transactionsResult.data.filter((tx: any) => String(tx.agent_id) === String(currentAgentId))
+        : [];
+      const agentPayouts = Array.isArray(payoutsResult.data)
+        ? payoutsResult.data.filter((p: any) => String(p.agent_id) === String(currentAgentId))
+        : [];
+
+      setTransactions(agentTransactions);
+      setPayouts(agentPayouts);
+
+    } catch (err: unknown) {
+      let errorMessage = 'An unknown error occurred.';
+      if (err instanceof Error) errorMessage = err.message;
+      console.error("Error fetching agent commission data:", errorMessage);
+      setError(errorMessage);
+      setTransactions([]);
+      setPayouts([]);
+    } finally {
+      setLoading(false);
     }
-  }, [currentUser, navigate]);
+  }, [apiBaseUrl, currentAgentId]); // Add currentAgentId dependency
 
-  // Filter transactions for this agent
-  const agentTransactions = transactions.filter(
-    (transaction) => currentUser && transaction.agentName === currentUser.name,
-  );
-
-  // Calculate commission statistics
   useEffect(() => {
-    if (agentTransactions.length > 0) {
-      const now = new Date();
-      const thisMonth = now.getMonth();
-      const thisYear = now.getFullYear();
-      const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
-      const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+    fetchData();
+  }, [fetchData]);
 
-      const total = agentTransactions.reduce((sum, t) => sum + t.commission, 0);
-      const pending = agentTransactions
-        .filter((t) => t.status === "pending")
-        .reduce((sum, t) => sum + t.commission, 0);
-      const completed = agentTransactions
-        .filter((t) => t.status === "completed")
-        .reduce((sum, t) => sum + t.commission, 0);
-
-      const thisMonthCommission = agentTransactions
-        .filter((t) => {
-          const date = new Date(t.date);
-          return (
-            date.getMonth() === thisMonth && date.getFullYear() === thisYear
-          );
-        })
-        .reduce((sum, t) => sum + t.commission, 0);
-
-      const lastMonthCommission = agentTransactions
-        .filter((t) => {
-          const date = new Date(t.date);
-          return (
-            date.getMonth() === lastMonth &&
-            date.getFullYear() === lastMonthYear
-          );
-        })
-        .reduce((sum, t) => sum + t.commission, 0);
-
-      setCommissionStats({
-        total,
-        pending,
-        completed,
-        thisMonth: thisMonthCommission,
-        lastMonth: lastMonthCommission,
-      });
-    }
-  }, [agentTransactions]);
-
-  // Apply filters
-  const filteredTransactions = agentTransactions
-    .filter((transaction) => {
-      // Status filter
-      if (statusFilter !== "all" && transaction.status !== statusFilter) {
-        return false;
-      }
-
-      // Period filter
-      if (periodFilter !== "all") {
-        const transactionDate = new Date(transaction.date);
-        const now = new Date();
-        const thisMonth = now.getMonth();
-        const thisYear = now.getFullYear();
-
-        if (periodFilter === "thisMonth") {
-          return (
-            transactionDate.getMonth() === thisMonth &&
-            transactionDate.getFullYear() === thisYear
-          );
-        } else if (periodFilter === "lastMonth") {
-          const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
-          const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
-          return (
-            transactionDate.getMonth() === lastMonth &&
-            transactionDate.getFullYear() === lastMonthYear
-          );
-        } else if (periodFilter === "thisYear") {
-          return transactionDate.getFullYear() === thisYear;
-        }
-      }
-
-      return true;
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-500";
+      case "processed":
+        return "bg-green-500 text-white";
       case "pending":
-        return "bg-yellow-500";
+        return "bg-yellow-500 text-black";
       case "failed":
-        return "bg-red-500";
+      case "refunded":
+        return "bg-red-500 text-white";
       default:
-        return "bg-gray-500";
+        return "bg-gray-500 text-white";
     }
   };
 
-  const exportCommissionsToCSV = () => {
-    const headers = [
-      "Date",
-      "Client",
-      "Product",
-      "Amount",
-      "Commission",
-      "Status",
-    ];
+  // Calculate summary stats
+  const totalCommissionEarned = transactions
+    .filter(t => t.status === 'completed')
+    .reduce((sum, t) => sum + (Number(t.commission) || 0), 0);
 
-    const csvData = [
-      headers.join(","),
-      ...filteredTransactions.map((transaction) =>
-        [
-          `"${transaction.date}"`,
-          `"${transaction.clientName}"`,
-          `"${transaction.product}"`,
-          `"R ${transaction.amount.toLocaleString()}"`,
-          `"R ${transaction.commission.toLocaleString()}"`,
-          `"${transaction.status}"`,
-        ].join(","),
-      ),
-    ].join("\n");
+  const totalPaidOut = payouts
+    .filter(p => p.status === 'processed')
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
 
-    const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "my-commissions.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const pendingPayout = payouts
+    .filter(p => p.status === 'pending')
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
 
-    toast({
-      title: "Export Complete",
-      description: "Your commissions have been exported to CSV",
-    });
-  };
-
-  // Calculate month-over-month growth percentage
-  const growthPercentage =
-    commissionStats.lastMonth > 0
-      ? ((commissionStats.thisMonth - commissionStats.lastMonth) /
-          commissionStats.lastMonth) *
-        100
-      : 0;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Commissions</h1>
-        <Button variant="outline" onClick={exportCommissionsToCSV}>
-          <Download className="mr-2 h-4 w-4" /> Export
-        </Button>
-      </div>
+      <h1 className="text-3xl font-bold">My Commissions</h1>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-white p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-500">Total Commissions</p>
-              <p className="text-2xl font-bold">
-                R {commissionStats.total.toLocaleString()}
-              </p>
-              <p className="text-xs text-gray-500">
-                {agentTransactions.length} transactions
-              </p>
-            </div>
-            <div className="p-3 bg-blue-100 rounded-full">
-              <DollarSign className="h-6 w-6 text-blue-600" />
-            </div>
-          </div>
-        </Card>
+       {/* Summary Cards */}
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+           <Card className="p-4"><p className="text-sm text-gray-500">Total Earned</p><p className="text-2xl font-bold">R {totalCommissionEarned.toLocaleString()}</p></Card>
+           <Card className="p-4"><p className="text-sm text-gray-500">Total Paid Out</p><p className="text-2xl font-bold">R {totalPaidOut.toLocaleString()}</p></Card>
+           <Card className="p-4"><p className="text-sm text-gray-500">Pending Payout</p><p className="text-2xl font-bold">R {pendingPayout.toLocaleString()}</p></Card>
+       </div>
 
-        <Card className="bg-white p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-500">This Month</p>
-              <p className="text-2xl font-bold">
-                R {commissionStats.thisMonth.toLocaleString()}
-              </p>
-              <div className="flex items-center text-xs">
-                {growthPercentage !== 0 && (
-                  <span
-                    className={
-                      growthPercentage > 0 ? "text-green-500" : "text-red-500"
-                    }
-                  >
-                    {growthPercentage > 0 ? "↑" : "↓"}{" "}
-                    {Math.abs(growthPercentage).toFixed(1)}%
-                  </span>
-                )}
-                <span className="text-gray-500 ml-1">vs last month</span>
-              </div>
-            </div>
-            <div className="p-3 bg-green-100 rounded-full">
-              <Calendar className="h-6 w-6 text-green-600" />
-            </div>
-          </div>
-        </Card>
 
-        <Card className="bg-white p-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-gray-500">Pending Commissions</p>
-              <p className="text-2xl font-bold">
-                R {commissionStats.pending.toLocaleString()}
-              </p>
-              <p className="text-xs text-gray-500">
-                {agentTransactions.filter((t) => t.status === "pending").length}{" "}
-                pending transactions
-              </p>
-            </div>
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <TrendingUp className="h-6 w-6 text-yellow-600" />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Commission History */}
-      <Card className="w-full bg-white p-6">
-        <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-bold">Commission History</h2>
-            <p className="text-sm text-gray-500">
-              Track your earnings from client referrals
-            </p>
-          </div>
-          <div className="flex flex-col md:flex-row gap-2">
-            <Select value={periodFilter} onValueChange={setPeriodFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Time Period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time</SelectItem>
-                <SelectItem value="thisMonth">This Month</SelectItem>
-                <SelectItem value="lastMonth">Last Month</SelectItem>
-                <SelectItem value="thisYear">This Year</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      {loading && (
+        <div className="flex justify-center items-center py-10">
+            <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+            <span className="ml-2">Loading commission data...</span>
         </div>
+      )}
+      {error && (
+        <Alert variant="destructive" className="my-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error Loading Data</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        <div className="rounded-md border overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Commission</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTransactions.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-8 text-gray-500"
-                  >
-                    {agentTransactions.length === 0 ? (
-                      <>
-                        <p>You haven't earned any commissions yet</p>
-                        <Button
-                          variant="link"
-                          onClick={() => navigate("/agent/register-client")}
-                          className="mt-2"
-                        >
-                          Register a client to start earning
-                        </Button>
-                      </>
-                    ) : (
-                      "No commissions found matching your criteria"
-                    )}
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredTransactions.map((transaction) => (
-                  <TableRow key={transaction.id}>
-                    <TableCell>{transaction.date}</TableCell>
-                    <TableCell className="font-medium">
-                      {transaction.clientName}
-                    </TableCell>
-                    <TableCell>{transaction.product}</TableCell>
-                    <TableCell>
-                      R {transaction.amount.toLocaleString()}
-                    </TableCell>
-                    <TableCell className="font-medium text-green-600">
-                      R {transaction.commission.toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="secondary"
-                        className={getStatusColor(transaction.status)}
-                      >
-                        {transaction.status.charAt(0).toUpperCase() +
-                          transaction.status.slice(1)}
-                      </Badge>
-                    </TableCell>
+      {!loading && !error && (
+        <>
+          {/* Recent Commissions Table */}
+          <Card className="w-full bg-white p-6">
+            <h2 className="text-2xl font-bold mb-4">Recent Commissions Earned</h2>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Client ID</TableHead>
+                    <TableHead>Product ID</TableHead>
+                    <TableHead>Sale Amount</TableHead>
+                    <TableHead>Commission</TableHead>
+                    <TableHead>Status</TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Summary */}
-        {filteredTransactions.length > 0 && (
-          <div className="mt-4 flex justify-end">
-            <div className="bg-gray-50 p-4 rounded-md">
-              <div className="flex items-center justify-between gap-8">
-                <div>
-                  <p className="text-sm text-gray-500">Total Transactions</p>
-                  <p className="font-bold">{filteredTransactions.length}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Total Amount</p>
-                  <p className="font-bold">
-                    R{" "}
-                    {filteredTransactions
-                      .reduce((sum, t) => sum + t.amount, 0)
-                      .toLocaleString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Total Commission</p>
-                  <p className="font-bold text-green-600">
-                    R{" "}
-                    {filteredTransactions
-                      .reduce((sum, t) => sum + t.commission, 0)
-                      .toLocaleString()}
-                  </p>
-                </div>
-              </div>
+                </TableHeader>
+                <TableBody>
+                  {transactions.length === 0 ? (
+                    <TableRow><TableCell colSpan={6} className="text-center text-gray-500">No recent commissions.</TableCell></TableRow>
+                  ) : (
+                    transactions.slice(0, 10).map((tx) => ( // Show recent 10
+                      <TableRow key={`tx-${tx.id}`}>
+                        <TableCell>{tx.date}</TableCell>
+                        <TableCell>{tx.client_id ?? 'N/A'}</TableCell>
+                        <TableCell>{tx.product_id ?? 'N/A'}</TableCell>
+                        <TableCell>R {tx.amount.toLocaleString()}</TableCell>
+                        <TableCell>R {tx.commission.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={getStatusColor(tx.status)}>
+                            {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
             </div>
-          </div>
-        )}
-      </Card>
+          </Card>
+
+          {/* Payout History Table */}
+          <Card className="w-full bg-white p-6">
+            <h2 className="text-2xl font-bold mb-4">Payout History</h2>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Period</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Payment Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payouts.length === 0 ? (
+                     <TableRow><TableCell colSpan={4} className="text-center text-gray-500">No payout history.</TableCell></TableRow>
+                  ) : (
+                    payouts.map((payout) => (
+                      <TableRow key={`payout-${payout.id}`}>
+                        <TableCell>{payout.period}</TableCell>
+                        <TableCell>R {payout.amount.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className={getStatusColor(payout.status)}>
+                            {payout.status.charAt(0).toUpperCase() + payout.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{payout.payment_date || "-"}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </Card>
+        </>
+      )}
     </div>
   );
 };
