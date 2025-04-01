@@ -1,11 +1,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Set the base path for the rewrite rules
-  RewriteBase /admin-dashboard/
+  # Set the base path for the rewrite rules within the React subdirectory
+  RewriteBase /React/admin-dashboard/
   # Don't rewrite files or directories
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-l
-  # Rewrite everything else to index.html to let React Router handle it
-  RewriteRule . /admin-dashboard/index.html [L]
+  # Rewrite everything else to index.html within the subdirectory
+  RewriteRule . /React/admin-dashboard/index.html [L]
 </IfModule>
