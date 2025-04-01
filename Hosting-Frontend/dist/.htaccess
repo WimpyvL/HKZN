@@ -1,9 +1,11 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /
+  # Set the base path for the subdirectory
+  RewriteBase /React/
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-l
-  RewriteRule . /index.html [L]
+  # Rewrite to the index.html within the subdirectory
+  RewriteRule . /React/index.html [L]
 </IfModule>

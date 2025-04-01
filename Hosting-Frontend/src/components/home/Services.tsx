@@ -1,5 +1,4 @@
-import React from 'react';
-import ServiceCard from '../common/ServiceCard';
+import React from 'react';import ServiceCard from '../common/ServiceCard';
 // Added Briefcase, PhoneCall, Wrench icons
 import { Monitor, WifiIcon, Mail, Server, Shield, Sun, Globe, ArrowRight, Briefcase, PhoneCall, Wrench } from 'lucide-react'; 
 import { Link } from 'react-router-dom';
@@ -13,7 +12,7 @@ const Services: React.FC = () => {
       description: 'Creative web design to enhance your online presence.',
       longDescription: 'Professional, responsive designs that capture your brand essence and provide seamless user experiences across all devices. Our web designs are optimized for conversions and built with the latest technologies.',
       icon: <Monitor size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`6b0744f0-7466-4815-9a73-7662a74d74d9.png",
+      customIcon: "/lovable-uploads/6b0744f0-7466-4815-9a73-7662a74d74d9.png",
       link: '/web-design'
     },
     {
@@ -21,7 +20,7 @@ const Services: React.FC = () => {
       description: 'Seamless connections free to the home/business/LTE.',
       longDescription: 'High-speed, reliable internet connectivity solutions for homes and businesses. We offer fiber, LTE, and wireless options customized to your specific needs and location requirements.',
       icon: <WifiIcon size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`1dee1658-e5a9-4d52-8a0a-1b71f85fdd73.png",
+      customIcon: "/lovable-uploads/1dee1658-e5a9-4d52-8a0a-1b71f85fdd73.png",
       link: '/connectivity'
     },
     {
@@ -29,7 +28,7 @@ const Services: React.FC = () => {
       description: 'Efficient email systems and automation tools.',
       longDescription: 'Enterprise-grade email solutions with advanced security features. Our automation workflows streamline your business processes and increase productivity while reducing manual tasks.',
       icon: <Mail size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`5dbc5e7e-9dcd-4df6-a2da-06776d143f49.png",
+      customIcon: "/lovable-uploads/5dbc5e7e-9dcd-4df6-a2da-06776d143f49.png",
       link: '/email-automation'
     },
     {
@@ -37,7 +36,7 @@ const Services: React.FC = () => {
       description: 'Reliable hosting services to keep your website online.',
       longDescription: 'Scalable, secure hosting solutions with 99.9% uptime guarantee. Our hosting packages include regular backups, security monitoring, and expert technical support available 24/7.',
       icon: <Server size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`6633ebe4-c56f-4a05-ae61-54f1f1de69a7.png",
+      customIcon: "/lovable-uploads/6633ebe4-c56f-4a05-ae61-54f1f1de69a7.png",
       link: '/hosting'
     },
     {
@@ -45,7 +44,7 @@ const Services: React.FC = () => {
       description: 'Reliable cloud solutions to manage and maintain your business.',
       longDescription: 'Comprehensive cloud infrastructure that scales with your business. Our cloud services include virtual servers, storage solutions, backup systems, and disaster recovery planning.',
       icon: <Globe size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`d871fb3b-bd23-46a1-adcf-ee0290c701d8.png",
+      customIcon: "/lovable-uploads/d871fb3b-bd23-46a1-adcf-ee0290c701d8.png",
       link: '/cloud-services'
     },
     {
@@ -53,7 +52,7 @@ const Services: React.FC = () => {
       description: 'Comprehensive security solutions for peace of mind.',
       longDescription: 'Multi-layered security approach to protect your digital assets. We provide firewall protection, intrusion detection, vulnerability assessments, and employee security awareness training.',
       icon: <Shield size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`1618c6a8-2676-4ce0-9e99-7d65f17477f7.png",
+      customIcon: "/lovable-uploads/1618c6a8-2676-4ce0-9e99-7d65f17477f7.png",
       link: '/security'
     },
     {
@@ -61,7 +60,7 @@ const Services: React.FC = () => {
       description: 'Innovative solar solutions for energy efficiency.',
       longDescription: 'Sustainable energy alternatives that reduce your carbon footprint and electricity costs. Our solar solutions are custom-designed for both residential and commercial properties.',
       icon: <Sun size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`ca85c645-5a19-4b83-82c8-6797f01310ad.png",
+      customIcon: "/lovable-uploads/ca85c645-5a19-4b83-82c8-6797f01310ad.png",
       link: '/solar-solutions'
     },
     {
@@ -69,7 +68,7 @@ const Services: React.FC = () => {
       description: 'High-speed fibre solutions for your internet needs.',
       longDescription: 'Flexible, no-contract fiber options with pay-as-you-go convenience. Get high-speed internet access without long-term commitments or hidden fees.',
       icon: <WifiIcon size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`1dee1658-e5a9-4d52-8a0a-1b71f85fdd73.png",
+      customIcon: "/lovable-uploads/1dee1658-e5a9-4d52-8a0a-1b71f85fdd73.png",
       link: '/fibre-prepaid'
     },
     // Added Microsoft Business
@@ -78,7 +77,7 @@ const Services: React.FC = () => {
       description: 'Productivity and cloud solutions for modern businesses.',
       longDescription: 'Leverage Microsoft 365 and Azure with our expert setup, migration, and management services to enhance collaboration and scalability.',
       icon: <Briefcase size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`Microsoft.png", // Updated icon path
+      customIcon: "/lovable-uploads/Microsoft.png", // Updated icon path
       link: '/microsoft-business'
     },
     // Added VoIP
@@ -87,7 +86,7 @@ const Services: React.FC = () => {
       description: 'Modern, cost-effective business phone systems.',
       longDescription: 'Upgrade to a feature-rich Voice over IP system for clear calls, flexibility, and significant cost savings compared to traditional lines.',
       icon: <PhoneCall size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`VOIP.png", // Updated icon path
+      customIcon: "/lovable-uploads/VOIP.png", // Updated icon path
       link: '/voip'
     },
     // Added IT Support
@@ -96,7 +95,7 @@ const Services: React.FC = () => {
       description: 'Reliable tech support to keep your business running.',
       longDescription: 'Comprehensive remote and on-site IT support, proactive monitoring, and managed services to minimize downtime and maximize productivity.',
       icon: <Wrench size={36} />,
-      customIcon: ${import.meta.env.BASE_URL}lovable-uploads/`IT Support.png", // Corrected icon path
+      customIcon: "/lovable-uploads/IT Support.png", // Corrected icon path
       link: '/it-support'
     }
   ];

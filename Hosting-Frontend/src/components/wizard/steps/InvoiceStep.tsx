@@ -204,7 +204,7 @@ const InvoiceStep: React.FC<InvoiceStepProps> = ({ userInfo, websiteInfo, select
           <div className="flex flex-col sm:flex-row justify-between items-start mb-6 p-6"> {/* Added padding */}
             <div className="mb-4 sm:mb-0">
             <img
-              src=${import.meta.env.BASE_URL}lovable-uploads/`ca2b907c-14e4-41c4-b440-d5d94066ef4f.png" // Logo path from Footer
+              src="/lovable-uploads/ca2b907c-14e4-41c4-b440-d5d94066ef4f.png" // Logo path from Footer
               alt="Hosting KZN"
               className="h-16 object-contain" // Adjusted size
             />
