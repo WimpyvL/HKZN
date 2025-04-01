@@ -1,0 +1,15 @@
+# Netlify build configuration for the Frontend
+
+[build]
+  # Base directory to change to before starting build commands
+  base = "Hosting-Frontend"
+  # Build command
+  command = "npm run build"
+  # Directory containing the built assets
+  publish = "Hosting-Frontend/dist"
+
+# Redirect rule for Single Page Applications (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useSupabaseStore } from "@/lib/supabaseStore";
+// import { useSupabaseStore } from "@/lib/supabaseStore"; // Removed unused import
 import { useStore } from "@/lib/store";
 import LoadingScreen from "../LoadingScreen";
 

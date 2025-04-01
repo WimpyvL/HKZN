@@ -11,15 +11,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { useSupabaseStore } from "@/lib/supabaseStore";
+// import { useSupabaseStore } from "@/lib/supabaseStore"; // Removed Supabase store import
 import { toast } from "@/components/ui/use-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isAgent, setIsAgent] = useState(false);
+  const [isAgent, setIsAgent] = useState(false); // Note: This checkbox might not be needed depending on your final auth
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useSupabaseStore();
+  // const { login } = useSupabaseStore(); // Removed Supabase store usage
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,26 +79,33 @@ const LoginPage = () => {
         return;
       }
 
-      const success = await login(email, password, isAgent);
+      // const success = await login(email, password, isAgent); // Removed call to Supabase login
 
-      if (success) {
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${isAgent ? "Agent" : "Admin"}!`,
-        });
-
-        // Use window.location.href instead of navigate to ensure a full page reload
-        window.location.href = isAgent ? "/agent" : "/admin";
-      } else {
-        toast({
-          title: "Login failed",
-          description: "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+      // Placeholder logic - assumes login always fails if not demo credentials
+      // You need to replace this with your actual login logic
       toast({
-        title: "Login error",
+        title: "Login failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
+
+      // if (success) {
+      //   toast({
+      //     title: "Login successful",
+      //     description: `Welcome back, ${isAgent ? "Agent" : "Admin"}!`,
+      //   });
+      //   // Use window.location.href instead of navigate to ensure a full page reload
+      //   window.location.href = isAgent ? "/agent" : "/admin";
+      // } else {
+      //   toast({
+      //     title: "Login failed",
+      //     description: "Invalid email or password. Please try again.",
+      //     variant: "destructive",
+      //   });
+      // }
+    } catch (error) { // Keep generic error handling
+      toast({
+        title: "Login error", // Keep generic error handling
         description: "An error occurred during login. Please try again.",
         variant: "destructive",
       });
