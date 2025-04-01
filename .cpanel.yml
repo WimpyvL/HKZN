@@ -2,7 +2,8 @@
 deployment:
   tasks:
     # IMPORTANT: Replace '/home/your_cpanel_user/' with your actual cPanel home directory path!
-    - export DEPLOYPATH=/home/your_cpanel_user/public_html
+    - export DEPLOYPATH=export DEPLOYPATH=/home/domkzn/public_html
+
 
     # Deploy Frontend (including its .htaccess from public/)
     - /bin/cp -R Hosting-Frontend/dist/. $DEPLOYPATH/
