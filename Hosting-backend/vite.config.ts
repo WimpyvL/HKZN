@@ -12,7 +12,7 @@ if (process.env.TEMPO === "true") {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/admin-dashboard/", // Set base path for dashboard subdirectory
+  base: "/React/admin-dashboard/", // Set base path for dashboard subdirectory within React
   optimizeDeps: {
     entries: ["src/main.tsx", "src/tempobook/**/*"],
   },

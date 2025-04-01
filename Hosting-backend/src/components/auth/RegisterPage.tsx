@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { useSupabaseStore } from "@/lib/supabaseStore";
+// import { useSupabaseStore } from "@/lib/supabaseStore"; // Removed Supabase store import
 import { toast } from "@/components/ui/use-toast";
 
 const RegisterPage = () => {
@@ -24,7 +24,7 @@ const RegisterPage = () => {
     isAgent: false,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { register } = useSupabaseStore();
+  // const { register } = useSupabaseStore(); // Removed Supabase store usage
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,32 +50,41 @@ const RegisterPage = () => {
 
     setIsLoading(true);
 
-    try {
-      const success = await register(formData);
+    // try {
+      // const success = await register(formData); // Removed call to Supabase register function
 
-      if (success) {
-        toast({
-          title: "Registration successful",
-          description: "Your account has been created. Please log in.",
-        });
-        navigate("/login");
-      } else {
-        toast({
-          title: "Registration failed",
-          description:
-            "There was a problem creating your account. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+      // Placeholder logic - assumes registration always fails for now
+      // You need to replace this with your actual registration logic
       toast({
-        title: "Registration error",
-        description: "An error occurred during registration. Please try again.",
+        title: "Registration Temporarily Disabled",
+        description:
+          "Account creation is currently unavailable.",
         variant: "destructive",
       });
-    } finally {
+
+      // if (success) {
+      //   toast({
+      //     title: "Registration successful",
+      //     description: "Your account has been created. Please log in.",
+      //   });
+      //   navigate("/login");
+      // } else {
+      //   toast({
+      //     title: "Registration failed",
+      //     description:
+      //       "There was a problem creating your account. Please try again.",
+      //     variant: "destructive",
+      //   });
+      // }
+    // } catch (error) {
+    //   toast({
+    //     title: "Registration error",
+    //     description: "An error occurred during registration. Please try again.",
+    //     variant: "destructive",
+    //   });
+    // } finally {
       setIsLoading(false);
-    }
+    // }
   };
 
   return (
