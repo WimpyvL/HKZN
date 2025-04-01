@@ -20,7 +20,7 @@ const Index: React.FC = () => {
       {/* Video replacing BannerCarousel */}
       <div className="w-full overflow-hidden"> {/* Container to prevent layout shifts if needed */}
         <video 
-          src="/lovable-uploads/Hosting Banners 2025 (3).mp4" 
+          src=${import.meta.env.BASE_URL}lovable-uploads/`Hosting Banners 2025 (3).mp4" 
           autoPlay 
           muted 
           loop 

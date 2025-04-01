@@ -12,16 +12,16 @@ const BannerCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const banners: Banner[] = [{
     id: 1,
-    image: "/lovable-uploads/cc5a2576-c1e7-4f41-95b3-0c097c3eed87.png"
+    image: ${import.meta.env.BASE_URL}lovable-uploads/`cc5a2576-c1e7-4f41-95b3-0c097c3eed87.png"
   }, {
     id: 2,
-    image: "/lovable-uploads/60d97b9b-0b6d-4741-8412-58e4d5ca12aa.png"
+    image: ${import.meta.env.BASE_URL}lovable-uploads/`60d97b9b-0b6d-4741-8412-58e4d5ca12aa.png"
   }, {
     id: 3,
-    image: "/lovable-uploads/9bbf696f-10d8-4c67-a83c-094082328af0.png"
+    image: ${import.meta.env.BASE_URL}lovable-uploads/`9bbf696f-10d8-4c67-a83c-094082328af0.png"
   }, {
     id: 4,
-    image: "/lovable-uploads/a1404c56-4425-4cdd-b4bd-1aecc74a29cc.png"
+    image: ${import.meta.env.BASE_URL}lovable-uploads/`a1404c56-4425-4cdd-b4bd-1aecc74a29cc.png"
   }];
 
   // Auto-advance the carousel every 5 seconds

@@ -74,7 +74,7 @@ const AboutUs: React.FC = () => {
           <div className="max-w-3xl mx-auto mt-12">
             <div className="text-center mb-8">
               <img 
-                src="/lovable-uploads/d44f5e5f-7225-4c1d-8aa1-a0bf4cc77219.png" 
+                src=${import.meta.env.BASE_URL}lovable-uploads/`d44f5e5f-7225-4c1d-8aa1-a0bf4cc77219.png" 
                 alt="Our Community" 
                 className="mx-auto w-32 h-32 object-contain"
               />
