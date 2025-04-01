@@ -1,17 +1,17 @@
 ---
 deployment:
   tasks:
-    # Set the deployment path to the React subdirectory
-    - export DEPLOYPATH=/home/domkzn/public_html/React
+    # Set the deployment path to the ReactDev subdirectory
+    - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
 
-    # Deploy Frontend into the React directory
-    - /bin/mkdir -p $DEPLOYPATH # Ensure React directory exists
+    # Deploy Frontend into the ReactDev directory
+    - /bin/mkdir -p $DEPLOYPATH # Ensure ReactDev directory exists
     - /bin/cp -R Hosting-Frontend/dist/. $DEPLOYPATH/
 
-    # Deploy Backend Dashboard into React/admin-dashboard/
-    - /bin/mkdir -p $DEPLOYPATH/admin-dashboard # Create admin-dashboard within React
+    # Deploy Backend Dashboard into ReactDev/admin-dashboard/
+    - /bin/mkdir -p $DEPLOYPATH/admin-dashboard # Create admin-dashboard within ReactDev
     - /bin/cp -R Hosting-backend/dist/. $DEPLOYPATH/admin-dashboard/
 
-    # Deploy PHP API into React/php-api/
-    - /bin/mkdir -p $DEPLOYPATH/php-api # Create php-api within React
+    # Deploy PHP API into ReactDev/php-api/
+    - /bin/mkdir -p $DEPLOYPATH/php-api # Create php-api within ReactDev
     - /bin/cp -R php-api/. $DEPLOYPATH/php-api/
