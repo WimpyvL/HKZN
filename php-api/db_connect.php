@@ -5,8 +5,8 @@ ini_set('display_errors', 0); // Do NOT display errors in output
 ini_set('log_errors', 1);    // Log errors to the PHP error log
 
 // --- CORS Headers ---
-// Allow requests from the frontend (port 8080) and the backend dashboard (port 5173)
-$allowed_origins = ["http://localhost:8080", "http://localhost:5173"];
+// Allow requests from the frontend (port 8080), backend dashboard (port 5173), and deployed domain
+$allowed_origins = ["http://localhost:8080", "http://localhost:5173", "https://www.hostingkzn.com"];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (in_array($origin, $allowed_origins)) {
