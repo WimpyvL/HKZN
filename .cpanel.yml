@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    # IMPORTANT: Replace '/home/your_cpanel_user/' with your actual cPanel home directory path!
+    - export DEPLOYPATH=/home/your_cpanel_user/public_html
+
+    # Deploy Frontend (including its .htaccess from public/)
+    - /bin/cp -R Hosting-Frontend/dist/. $DEPLOYPATH/
+
+    # Deploy Backend Dashboard (including its .htaccess from public/)
+    - /bin/mkdir -p $DEPLOYPATH/admin-dashboard # Create directory if needed
+    - /bin/cp -R Hosting-backend/dist/. $DEPLOYPATH/admin-dashboard/
+
+    # Deploy PHP API
+    - /bin/mkdir -p $DEPLOYPATH/php-api # Create directory if needed
+    - /bin/cp -R php-api/. $DEPLOYPATH/php-api/

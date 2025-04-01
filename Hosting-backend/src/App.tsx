@@ -17,6 +17,7 @@ import DashboardSelector from "./components/DashboardSelector";
 import { useStore } from "./lib/store";
 import ProtectedAgentRoute from "./components/auth/ProtectedAgentRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import NotFoundPage from "./components/NotFoundPage"; // Import the new 404 page
 
 function App() {
   const { isAuthenticated } = useStore();
@@ -143,8 +144,11 @@ function App() {
           }
         />
 
-        {/* Allow Tempo routes to be captured before the catchall */}
+        {/* Allow Tempo routes */}
         {import.meta.env.VITE_TEMPO === "true" && <Route path="/tempobook/*" />}
+
+        {/* Catch-all 404 route - MUST BE LAST */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );

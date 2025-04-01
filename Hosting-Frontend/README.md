@@ -1,69 +1,60 @@
-# Welcome to your Lovable project
+# Hosting KZN - Frontend Application
 
-## Project info
+This is the main customer-facing frontend application for Hosting KZN, built with React, TypeScript, Vite, and Tailwind CSS (using shadcn/ui components).
 
-**URL**: https://lovable.dev/projects/fbbd41f9-102b-40bb-b12d-2cd4bce7575f
+## Features
 
-## How can I edit this code?
+*   Displays company information, services, and contact details.
+*   Includes a contact form for user inquiries.
+*   Provides user authentication (Login/Register).
+*   Contains a service wizard for generating quotes.
+*   Links to the admin/agent dashboard for authenticated users with appropriate roles.
 
-There are several ways of editing your application.
+## Project Structure
 
-**Use Lovable**
+*   `public/`: Static assets.
+*   `src/`: Source code.
+    *   `components/`: Reusable UI components (common, contact, home, layout, ui, wizard).
+    *   `contexts/`: React contexts (e.g., authentication).
+    *   `data/`: Static data (e.g., wizard services).
+    *   `hooks/`: Custom React hooks (e.g., form handling).
+    *   `lib/`: Utility functions.
+    *   `pages/`: Top-level page components corresponding to routes.
+    *   `main.tsx`: Application entry point.
+    *   `App.tsx`: Main application component with routing.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/fbbd41f9-102b-40bb-b12d-2cd4bce7575f) and start prompting.
+## Setup and Running Locally
 
-Changes made via Lovable will be committed automatically to this repo.
+1.  **Prerequisites:**
+    *   Node.js (v18 or later recommended)
+    *   npm (usually comes with Node.js)
+    *   A running instance of the `php-api` backend (see backend README).
 
-**Use your preferred IDE**
+2.  **Installation:**
+    ```bash
+    npm install
+    ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3.  **Environment Variables:**
+    *   Create a `.env` file in the `Hosting-Frontend` root directory.
+    *   Add the following variable, pointing to your running PHP API:
+        ```
+        VITE_API_BASE_URL=http://localhost/HKZN/php-api
+        ```
+        (Adjust the URL if your local setup differs).
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+4.  **Running the Development Server:**
+    ```bash
+    npm run dev
+    ```
+    This will start the Vite development server, typically on `http://localhost:5173` (or the next available port).
 
-Follow these steps:
+5.  **Building for Production:**
+    ```bash
+    npm run build
+    ```
+    This creates an optimized build in the `dist` directory, ready for deployment.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Backend API
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/fbbd41f9-102b-40bb-b12d-2cd4bce7575f) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+This frontend requires the `php-api` backend to be running for authentication, quote saving, and contact form submission. Ensure the `VITE_API_BASE_URL` in the `.env` file points to the correct location of the running API.
