@@ -1,10 +1,10 @@
 ---
 deployment:
   tasks:
-    # Set the deployment path to the React subdirectory
-    - export DEPLOYPATH=/home/domkzn/public_html/React
+    # Set the deployment path to the ReactDev subdirectory
+    - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
 
-    # Deploy Frontend into the React directory
+    # Deploy Frontend into the ReactDev directory
     - /bin/mkdir -p $DEPLOYPATH # Ensure React directory exists
     - /bin/cp -R Hosting-Frontend/dist/. $DEPLOYPATH/
 
