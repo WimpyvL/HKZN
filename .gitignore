@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 
+# Local PHP Config Overrides
+php-api/db_connect.local.php
+
 # IDE specific
 .idea/
 .vscode/

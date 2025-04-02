@@ -28,10 +28,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 // --- Database Connection ---
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "hosting_kzn_db";
+// Default to Production Settings (or placeholders)
+$servername = "localhost";      // Often localhost for cPanel too
+$username = "domkzn_main";      // Production username
+$password = "YOUR_PRODUCTION_PASSWORD"; // Placeholder - DO NOT COMMIT REAL PASSWORD
+$dbname = "domkzn_maindb";      // Production database name
+
+// Check for a local override file
+if (file_exists(__DIR__ . '/db_connect.local.php')) {
+    include __DIR__ . '/db_connect.local.php'; // Load local settings (will override vars above)
+}
 
 $conn = null; // Initialize $conn to null
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // Throw mysqli_sql_exception on error
