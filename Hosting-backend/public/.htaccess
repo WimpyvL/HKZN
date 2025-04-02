@@ -2,10 +2,18 @@
   RewriteEngine On
   # Set the base path for the rewrite rules
   RewriteBase /ReactDev/admin-dashboard/
-  # Don't rewrite files or directories
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteCond %{REQUEST_FILENAME} !-l
-  # Rewrite everything else to index.html to let React Router handle it
+
+  # Skip rewrite if the request is for an existing file or directory
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L] # Do not rewrite anything further
+
+  # If the request doesn't match an existing file/directory, rewrite to index.html
   RewriteRule . /ReactDev/admin-dashboard/index.html [L]
 </IfModule>
+
+# Optional: Add specific MIME types if needed
+# <IfModule mod_mime.c>
+#   AddType text/javascript .js
+#   AddType text/css .css
+# </IfModule>

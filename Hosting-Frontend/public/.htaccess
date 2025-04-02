@@ -4,12 +4,18 @@
 
   RewriteRule ^index\.html$ - [L]
 
-  # Add condition: Don't rewrite if the request URI starts with /ReactDev/assets/
-  RewriteCond %{REQUEST_URI} !^/ReactDev/assets/
-  # If the request is not for an existing file
-  RewriteCond %{REQUEST_FILENAME} !-f
-  # And the request is not for an existing directory
-  RewriteCond %{REQUEST_FILENAME} !-d
-  # Rewrite to the index.html in the /ReactDev directory (absolute path from web root)
+  # Skip rewrite if the request is for an existing file or directory
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L] # Do not rewrite anything further
+
+  # If the request doesn't match an existing file/directory, rewrite to index.html
+  # This rule is simpler and relies on the conditions above to protect assets.
   RewriteRule . /ReactDev/index.html [L]
 </IfModule>
+
+# Optional: Add specific MIME types if needed, though usually not required with correct rewrite rules
+# <IfModule mod_mime.c>
+#   AddType text/javascript .js
+#   AddType text/css .css
+# </IfModule>
