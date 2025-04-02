@@ -4,8 +4,8 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: '/React', // Set base path for /React subdirectory
+export default defineConfig(({ command, mode }) => ({ // Add command to destructuring
+  base: command === 'build' ? '/ReactDev/' : '/', // Set base only for build command
   server: {
     host: "::",
     port: 8080,

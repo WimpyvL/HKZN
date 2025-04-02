@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 // Use HoverCard instead of Popover
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"; 
 import { BrainCircuit, BarChart3, Database, Sparkles, Bot, Share2, FileCheck, ArrowRight } from "lucide-react";
+import aiImage from '/lovable-uploads/1a7ea0bf-b9cf-4b20-8245-6b3c33d96b35.png'; // Import the image
 const AiIntegration: React.FC = () => {
   const aiFeatures = [{
     icon: <BrainCircuit className="w-8 h-8 text-hosting-orange" />,
@@ -93,7 +94,7 @@ const AiIntegration: React.FC = () => {
               <div className="flex justify-center mb-6">
                 
               </div>
-              <img alt="AI Integration" className="w-full max-w-md mx-auto rounded-lg shadow-xl" src="/lovable-uploads/1a7ea0bf-b9cf-4b20-8245-6b3c33d96b35.png" />
+              <img alt="AI Integration" className="w-full max-w-md mx-auto rounded-lg shadow-xl" src={aiImage} /> {/* Use imported variable */}
               
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
                 {aiFeatures.map((feature, index) => <div key={index} className="bg-gray-800 p-4 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:shadow-lg transform hover:-translate-y-1">

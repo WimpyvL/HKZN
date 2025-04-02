@@ -9,6 +9,7 @@ import Stats from '../components/home/Stats';
 import Testimonials from '../components/home/Testimonials';
 import CallToAction from '../components/home/CallToAction';
 import { Helmet } from 'react-helmet-async';
+import heroVideo from '/lovable-uploads/Hosting Banners 2025 (3).mp4'; // Import the video
 
 const Index: React.FC = () => {
   return (
@@ -20,7 +21,7 @@ const Index: React.FC = () => {
       {/* Video replacing BannerCarousel */}
       <div className="w-full overflow-hidden"> {/* Container to prevent layout shifts if needed */}
         <video 
-          src="/lovable-uploads/Hosting Banners 2025 (3).mp4" 
+          src={heroVideo} // Use imported variable
           autoPlay 
           muted 
           loop 

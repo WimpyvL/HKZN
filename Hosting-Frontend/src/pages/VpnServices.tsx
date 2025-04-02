@@ -5,6 +5,7 @@ import ServiceCard from '../components/common/ServiceCard';
 import { Button } from "@/components/ui/button";
 import { Shield, Globe, Lock, Users, RefreshCw, Laptop, Building, Settings } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import vpnServicesImage from '/lovable-uploads/f746fffe-b19c-46b7-89a9-73e322d85c7f.png'; // Import the image
 
 const VpnServices: React.FC = () => {
   const benefits = [
@@ -93,7 +94,7 @@ const VpnServices: React.FC = () => {
             
             <div className="animate-fade-up animate-delay-200 flex justify-center">
               <img 
-                src="/lovable-uploads/f746fffe-b19c-46b7-89a9-73e322d85c7f.png" 
+                src={vpnServicesImage} // Use imported variable
                 alt="VPN Services" 
                 className="w-64 h-64 object-contain"
               />

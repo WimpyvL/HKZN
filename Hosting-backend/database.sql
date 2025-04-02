@@ -334,6 +334,21 @@ CREATE POLICY "Allow admin full access on quotes" ON public.quotes
 ALTER PUBLICATION supabase_realtime ADD TABLE public.quotes;
 
 
+-- Create contact_submissions table
+-- Note: This uses standard SQL types suitable for MySQL/MariaDB, not PostgreSQL specific ones.
+CREATE TABLE contact_submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    services_interested TEXT,
+    message TEXT NOT NULL,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Note: No RLS or realtime needed for this simple contact table usually.
+
+
 -- Insert initial admin user (you'll need to replace this with your actual admin user ID)
 -- This assumes you've already created a user through Supabase Auth
 -- INSERT INTO public.agents (id, name, email, phone, referral_code, commission_rate, status, join_date)

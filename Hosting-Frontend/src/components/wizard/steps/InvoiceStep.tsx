@@ -10,6 +10,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 // import { supabase } from '@/integrations/supabase/client'; // Removed Supabase import
 import { useToast } from '@/components/ui/use-toast';
+import invoiceLogo from '/lovable-uploads/ca2b907c-14e4-41c4-b440-d5d94066ef4f.png'; // Import the image
 
 // Define props type
 interface UserInfo {
@@ -202,9 +203,9 @@ const InvoiceStep: React.FC<InvoiceStepProps> = ({ userInfo, websiteInfo, select
         <CardContent className="p-0"> {/* Remove CardContent padding, use div padding */}
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start mb-6 p-6"> {/* Added padding */}
-            <div className="mb-4 sm:mb-0">
+          <div className="mb-4 sm:mb-0">
             <img
-              src="/lovable-uploads/ca2b907c-14e4-41c4-b440-d5d94066ef4f.png" // Logo path from Footer
+              src={invoiceLogo} // Use imported variable
               alt="Hosting KZN"
               className="h-16 object-contain" // Adjusted size
             />

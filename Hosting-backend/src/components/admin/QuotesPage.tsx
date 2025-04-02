@@ -4,8 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
+import { Button } from "@/components/ui/button"; // Import Button
+import { Badge } from "@/components/ui/badge"; // Re-add Badge import
 import { useToast } from "@/components/ui/use-toast"; // Import useToast
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Eye } from 'lucide-react'; // Import Eye icon
+import { QuoteDetailsModal } from '@/components/modals/QuoteDetailsModal'; // Import the modal
 
 // Define the structure of a quote object based on get_quotes.php output
 interface ClientDetails {
@@ -32,12 +35,17 @@ interface ServiceOption {
   features: string[];
 }
 
+// This interface should match the modal's definition
+interface SelectedServices {
+  [categoryId: string]: ServiceOption | null;
+}
+
 interface Quote {
   id: number;
   quote_number: string;
   client_details: ClientDetails | string; // Can be object or JSON string
   website_details?: WebsiteDetails | string | null; // Optional
-  selected_services: ServiceOption[] | string; // Can be array or JSON string
+  selected_services: SelectedServices | string; // Should be object or JSON string
   sub_total: number;
   vat_amount: number;
   total_amount: number;
@@ -51,6 +59,8 @@ const QuotesPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingStatusId, setUpdatingStatusId] = useState<number | null>(null); // Track which quote is updating
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // State for modal visibility
+  const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null); // State for selected quote data
 
   // Get API base URL from environment variables
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -135,6 +145,11 @@ const QuotesPage: React.FC = () => {
     }
   };
 
+  // --- Modal Handler ---
+  const handleViewDetails = (quote: Quote) => {
+    setSelectedQuote(quote);
+    setIsModalOpen(true);
+  };
 
   // Helper to safely parse JSON string fields
   const parseJsonField = <T,>(fieldData: T | string | null | undefined): T | null => {
@@ -198,9 +213,19 @@ const QuotesPage: React.FC = () => {
                             {/* Format currency if needed, ensuring value is a number */}
                             {`R ${Number(quote.total_amount).toFixed(2)}`}
                           </TableCell>
-                          <TableCell>{quote.status}</TableCell>
                           <TableCell>
-                            {/* Add Select dropdown for status change */}
+                             <Badge variant={quote.status === 'pending' ? 'secondary' : 'default'}>{quote.status}</Badge>
+                          </TableCell>
+                          <TableCell className="space-x-2"> {/* Add spacing for buttons */}
+                            {/* View Details Button */}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleViewDetails(quote)}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> View
+                            </Button>
+                            {/* Status Select dropdown */}
                             <Select
                               value={quote.status}
                               onValueChange={(newStatus) => handleStatusChange(quote.id, newStatus)}
@@ -234,6 +259,13 @@ const QuotesPage: React.FC = () => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Render the modal */}
+      <QuoteDetailsModal
+        quote={selectedQuote}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

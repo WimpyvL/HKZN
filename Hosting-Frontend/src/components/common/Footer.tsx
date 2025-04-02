@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { Facebook, Instagram } from 'lucide-react'; // Import Instagram icon
 import { Button } from '@/components/ui/button';
+import footerLogo from '/lovable-uploads/ca2b907c-14e4-41c4-b440-d5d94066ef4f.png'; // Import the image
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -27,7 +28,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="mb-4">
               <img 
-                src="/lovable-uploads/ca2b907c-14e4-41c4-b440-d5d94066ef4f.png" 
+                src={footerLogo} // Use imported variable
                 alt="Hosting KZN" 
                 className="h-12 object-contain"
               />

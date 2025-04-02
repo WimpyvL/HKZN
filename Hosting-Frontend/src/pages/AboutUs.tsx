@@ -3,6 +3,7 @@ import React from 'react';
 import Layout from '../components/layout/Layout';
 import { Button } from "@/components/ui/button";
 import { Helmet } from 'react-helmet-async';
+import communityImage from '/lovable-uploads/d44f5e5f-7225-4c1d-8aa1-a0bf4cc77219.png'; // Import the image
 
 const AboutUs: React.FC = () => {
   const team = [
@@ -74,7 +75,7 @@ const AboutUs: React.FC = () => {
           <div className="max-w-3xl mx-auto mt-12">
             <div className="text-center mb-8">
               <img 
-                src="/lovable-uploads/d44f5e5f-7225-4c1d-8aa1-a0bf4cc77219.png" 
+                src={communityImage} // Use imported variable
                 alt="Our Community" 
                 className="mx-auto w-32 h-32 object-contain"
               />

@@ -1,6 +1,25 @@
 {
-  "dependencies": {
-    "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.1"
+  "name": "hkzn-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Monorepo for HKZN Frontend, Backend Dashboard, and PHP API",
+  "scripts": {
+    "install:all": "npm install --ws --if-present",
+    "build:frontend": "npm run build -w Hosting-Frontend",
+    "build:backend": "npm run build -w Hosting-backend",
+    "build:all": "npm run build -ws --if-present",
+    "dev:frontend": "cd Hosting-Frontend && npx vite",
+    "dev:backend": "cd Hosting-backend && npx vite",
+    "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\""
+  },
+  "workspaces": [
+    "Hosting-Frontend",
+    "Hosting-backend"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "vite": "^5.4.1"
   }
 }
