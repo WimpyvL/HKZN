@@ -1,15 +1,12 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # RewriteBase /React/ # Optional: Can sometimes be omitted if RewriteRule uses absolute path
+  RewriteBase /ReactDev/ # Set correct base path
 
-  RewriteRule ^index\.html$ - [L]
+  # Skip rewrite if the request is for an existing file or directory
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L] # Do not rewrite anything further
 
-  # Add condition: Don't rewrite if the request URI starts with /React/assets/
-  RewriteCond %{REQUEST_URI} !^/React/assets/
-  # If the request is not for an existing file
-  RewriteCond %{REQUEST_FILENAME} !-f
-  # And the request is not for an existing directory
-  RewriteCond %{REQUEST_FILENAME} !-d
-  # Rewrite to the index.html in the /React directory (absolute path from web root)
-  RewriteRule . /React/index.html [L]
+  # If the request doesn't match an existing file/directory, rewrite to index.html
+  RewriteRule . /ReactDev/index.html [L]
 </IfModule>
