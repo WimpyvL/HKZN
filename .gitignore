@@ -24,4 +24,5 @@ node_modules/
 # Build outputs (covered by sub-project gitignores, but good practice)
 # dist/ # Ignored generally, but unignore specific ones needed for deployment
 build/
-
+!Hosting-Frontend/dist/
+!Hosting-backend/dist/
