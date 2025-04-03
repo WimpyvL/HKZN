@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -19,58 +19,20 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated, currentUser } = useStore();
+  // Use isLoadingAuth from the store now
+  const { isAuthenticated, isLoadingAuth, checkAuth } = useAppStore();
   const navigate = useNavigate();
 
-  // Check authentication on mount
+  // Check authentication on mount using the store's checkAuth
   useEffect(() => {
-    const checkInitialAuth = () => {
-      try {
-        // Check if we have auth data in localStorage
-        const storedData = localStorage.getItem("agent-referral-storage");
-        if (storedData) {
-          // We have data, auth is complete
-          setIsLoading(false);
-        } else {
-          // No stored data, redirect to login
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error("Error checking auth:", error);
-        setIsLoading(false);
-      }
-    };
-
-    // Add a timeout to ensure we don't get stuck in loading state
-    const timeoutId = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    checkInitialAuth();
-
-    // Clear timeout on unmount
-    return () => clearTimeout(timeoutId);
-  }, []);
-
-  // Mock auth check function
-  const checkAuth = async () => {
-    setIsLoading(true);
-    try {
-      // Simulate auth check
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 500);
-    } catch (error) {
-      console.error("Auth check error:", error);
-      setIsLoading(false);
-    }
-  };
+    // The checkAuth function is now called automatically when the store initializes
+    // We just need to reflect the store's loading state
+  }, []); // Empty dependency array, checkAuth runs once on store init
 
   const value = {
     isAuthenticated,
-    isLoading,
-    checkAuth,
+    isLoading: isLoadingAuth, // Use loading state from store
+    checkAuth, // Pass the checkAuth function from the store
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

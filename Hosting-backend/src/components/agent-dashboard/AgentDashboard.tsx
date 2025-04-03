@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react"; // Import hooks
 import { useNavigate, useLocation } from "react-router-dom";
 import AgentSidebar from "./AgentSidebar";
-import { useStore } from "@/lib/store"; // Keep for currentUser
+import { useAppStore } from "@/lib/store"; // Corrected import
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -36,7 +36,7 @@ interface Transaction {
 interface Product { id: string | number; name: string; isActive?: boolean; /* other fields */ }
 
 const AgentDashboard = () => {
-  const { currentUser } = useStore(); // Keep for user info and role check
+  const { currentUser } = useAppStore(); // Corrected hook name
   const navigate = useNavigate();
   const location = useLocation();
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 import LoadingScreen from "../LoadingScreen";
 
 interface ProtectedAgentRouteProps {
@@ -10,12 +10,14 @@ interface ProtectedAgentRouteProps {
 const ProtectedAgentRoute: React.FC<ProtectedAgentRouteProps> = ({
   children,
 }) => {
-  const { currentUser, isAuthenticated } = useStore();
+  const { currentUser, isAuthenticated, isLoadingAuth } = useAppStore(); // Corrected hook name, added isLoadingAuth
   const navigate = useNavigate();
 
-  // No need for useEffect since we're handling the redirect immediately below
-
   // Show loading screen while checking authentication
+  if (isLoadingAuth) {
+    return <LoadingScreen />;
+  }
+  // If not authenticated after check, redirect to login
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

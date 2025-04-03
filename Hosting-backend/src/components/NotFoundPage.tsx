@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
-import { useStore } from '@/lib/store'; // To determine redirect link
+import { useAppStore } from '@/lib/store'; // Corrected import
 
 const NotFoundPage: React.FC = () => {
-  const { currentUser } = useStore();
+  const { currentUser } = useAppStore(); // Corrected hook name
 
   // Determine the correct dashboard link based on user role
   const dashboardLink = currentUser?.role === 'agent' ? '/agent' : '/admin';

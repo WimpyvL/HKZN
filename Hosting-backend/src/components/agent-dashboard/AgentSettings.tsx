@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useStore } from "@/lib/store";
+// import { useStore } from "@/lib/store"; // Remove duplicate/incorrect import
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
+import { useAppStore } from "@/lib/store"; // Corrected import
 
 const AgentSettings = () => {
-  const { currentUser, logout } = useStore();
+  const { currentUser, logout } = useAppStore(); // Corrected hook name
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
     name: "",

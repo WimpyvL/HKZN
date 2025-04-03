@@ -10,7 +10,7 @@ import {
   LogOut,
   UserPlus,
 } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 import { toast } from "@/components/ui/use-toast";
 
 interface SidebarProps {
@@ -26,7 +26,7 @@ interface NavItem {
 
 const AgentSidebar = ({ className, isCollapsed = false }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
-  const { logout } = useStore();
+  const { logout } = useAppStore(); // Corrected hook name
   const location = useLocation();
   const navigate = useNavigate();
 

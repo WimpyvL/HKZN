@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react"; // Import hooks
-import { useStore } from "@/lib/store"; // Keep for currentUser
+import { useAppStore } from "@/lib/store"; // Corrected import
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,8 @@ interface Product {
 }
 
 const ClientRegistration = () => {
-  const { currentUser } = useStore(); // Keep for agent ID and auth check
-  // const { products, addClient } = useStore(); // Remove store usage for products/addClient
+  const { currentUser } = useAppStore(); // Corrected hook name
+  // const { products, addClient } = useAppStore(); // Remove store usage for products/addClient
   const navigate = useNavigate();
 
   // State for products, form, steps, loading, error

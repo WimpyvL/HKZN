@@ -11,7 +11,7 @@ import {
   Package,
   ClipboardList, // Import ClipboardList icon
 } from "lucide-react";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 import { toast } from "@/components/ui/use-toast";
 
 interface SidebarProps {
@@ -27,7 +27,7 @@ interface NavItem {
 
 const Sidebar = ({ className, isCollapsed = false }: SidebarProps) => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
-  const { logout, isAuthenticated, currentUser } = useStore();
+  const { logout, isAuthenticated, currentUser } = useAppStore(); // Corrected hook name
   const location = useLocation();
   const navigate = useNavigate();
 

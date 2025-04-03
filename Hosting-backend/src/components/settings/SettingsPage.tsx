@@ -6,10 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import Sidebar from "../dashboard/Sidebar";
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 
 const SettingsPage = () => {
-  const { settings, updateSettings } = useStore();
+  // const { settings, updateSettings } = useAppStore(); // Settings state was removed
+  // TODO: Refactor this component if settings need to be managed via API/DB
+  // Using placeholder/default values for now to avoid breaking the UI structure
+  const settings = {
+    general: { companyName: '', adminEmail: '', timezone: '', dateFormat: '', darkMode: false },
+    commission: { defaultRate: 0, minRate: 0, maxRate: 0, payoutThreshold: 0, autoApprove: false, tieredRates: false },
+    notifications: { email: false, newClient: false, commission: false, agentActivity: false, notificationEmail: '' }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">

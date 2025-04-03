@@ -14,25 +14,25 @@ import QuotesPage from "./components/admin/QuotesPage"; // Import the new Quotes
 import AdminCommissionPayouts from "./components/dashboard/AdminCommissionPayouts";
 import LoadingScreen from "./components/LoadingScreen";
 import DashboardSelector from "./components/DashboardSelector";
-import { useStore } from "./lib/store";
+import { useAppStore } from "./lib/store"; // Corrected import
 import ProtectedAgentRoute from "./components/auth/ProtectedAgentRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import NotFoundPage from "./components/NotFoundPage"; // Import the new 404 page
 
 function App() {
-  const { isAuthenticated } = useStore();
-  const [isLoading, setIsLoading] = useState(true);
+  // Use isLoadingAuth from the store instead of local isLoading state
+  const { isAuthenticated, isLoadingAuth } = useAppStore(); // Corrected hook name
 
-  useEffect(() => {
+  // useEffect(() => { // Remove local loading simulation
     // Simulate loading for a better UX
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    // const timer = setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 1500);
 
-    return () => clearTimeout(timer);
-  }, []);
+    // return () => clearTimeout(timer);
+  // }, []); // Remove local loading simulation
 
-  if (isLoading) {
+  if (isLoadingAuth) { // Use store's loading state
     return <LoadingScreen />;
   }
 

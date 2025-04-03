@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-// import { useSupabaseStore } from "@/lib/supabaseStore"; // Removed unused import
-import { useStore } from "@/lib/store";
+import { useAppStore } from "@/lib/store"; // Corrected import
 import LoadingScreen from "../LoadingScreen";
 
 interface ProtectedRouteProps {
@@ -13,10 +12,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRole,
 }) => {
-  const { isAuthenticated, currentUser } = useStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated, currentUser, isLoadingAuth } = useAppStore(); // Corrected hook name, added isLoadingAuth
 
-  if (isLoading) {
+  if (isLoadingAuth) { // Use loading state from store
     return <LoadingScreen />;
   }
 
