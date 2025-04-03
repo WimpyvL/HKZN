@@ -1,0 +1,12 @@
+<?php
+// Local Development Database Settings (XAMPP)
+// This file overrides the settings in db_connect.php when present.
+// DO NOT COMMIT THIS FILE TO GIT.
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "hosting_kzn_db";
+
+error_log("db_connect.local.php: Loaded local database configuration.");
+?>

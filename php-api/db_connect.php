@@ -29,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 // --- Database Connection ---
 // Default to Production Settings (or placeholders)
-$servername = "localhost";      // Often localhost for cPanel too
-$username = "domkzn_main";      // Production username
-$password = "YOUR_PRODUCTION_PASSWORD"; // Placeholder - DO NOT COMMIT REAL PASSWORD
-$dbname = "domkzn_maindb";      // Production database name
+$servername = "198.251.89.34";      // Often localhost for cPanel too
+$username = "abcaiadmin_user";      // Production username
+$password = "I};~eNGQof]d"; // Placeholder - DO NOT COMMIT REAL PASSWORD
+$dbname = "abcaiadmin_main";      // Production database name
 
 // Check for a local override file
 if (file_exists(__DIR__ . '/db_connect.local.php')) {
