@@ -13,7 +13,8 @@ if (process.env.TEMPO === "true") {
 // https://vitejs.dev/config/
 export default defineConfig(({ command }: ConfigEnv): UserConfig => { // Explicitly type return
   return {
-    base: command === 'build' ? "/ReactDev/admin-dashboard/" : "/", // Set base only for build
+    // Assuming backend dashboard will be deployed to /admin/ or similar subdirectory
+    base: command === 'build' ? "/admin/" : "/", // Adjust '/admin/' if needed
     optimizeDeps: {
       entries: ["src/main.tsx", "src/tempobook/**/*"],
     },

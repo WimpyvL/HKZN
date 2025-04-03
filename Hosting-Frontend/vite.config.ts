@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({ // Add command to destructuring
-  base: command === 'build' ? '/ReactDev/' : '/', // Set base only for build command
+  base: '/', // Set base to root for abcai.co.za deployment
   server: {
     host: "::",
     port: 8080,

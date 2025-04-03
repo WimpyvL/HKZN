@@ -74,27 +74,25 @@ The project is organized as a monorepo using npm workspaces:
         ```
     *   *Note:* If Git warns about adding ignored files (`dist` folders), you might need to use `git add -f Hosting-Frontend/dist Hosting-backend/dist` for the commit that includes the build output.
 
-3.  **Deploy via cPanel:**
-    *   Log in to cPanel -> Git Version Control.
-    *   Manage the `HKZN` repository.
-    *   Ensure the correct branch is checked out.
-    *   Click "Update from Remote" to pull the latest commit.
-    *   Click "Deploy HEAD Commit". This runs the script in `.cpanel.yml`, copying files to `/home/domkzn/public_html/ReactDev`.
+3.  **Deploy (Example: abcai.co.za):**
+    *   Deployment methods vary depending on the hosting provider (e.g., FTP, Git-based deployment like Netlify/Vercel, manual upload).
+    *   **Frontend (`Hosting-Frontend/dist`):** Deploy the contents of this folder to the web root directory (e.g., `public_html` or equivalent) for `abcai.co.za`.
+    *   **Backend Dashboard (`Hosting-backend/dist`):** Deploy the contents of this folder to a subdirectory like `/admin/` within the web root.
+    *   **PHP API (`php-api`):** Deploy this entire folder to a subdirectory like `/php-api/` within the web root.
 
-4.  **Manual Server Configuration:**
-    *   Using cPanel File Manager or SSH:
-        *   Create `/home/domkzn/public_html/ReactDev/.env` with `VITE_API_BASE_URL=/ReactDev/php-api`.
-        *   Create `/home/domkzn/public_html/ReactDev/admin-dashboard/.env` with `VITE_API_BASE_URL=/ReactDev/php-api`.
-        *   Edit `/home/domkzn/public_html/ReactDev/php-api/db_connect.php` and set the correct production database password.
-        *   Ensure the production database (`domkzn_maindb`) exists and has the correct schema (including `contact_submissions` table).
-        *   Ensure correct file/directory permissions (usually 755 for directories, 644 for files within `public_html`).
+4.  **Manual Server Configuration (Example: abcai.co.za):**
+    *   Create a `.env` file in the web root (where the frontend `index.html` is) with `VITE_API_BASE_URL=/php-api`.
+    *   Create a `.env` file in the `/admin/` directory with `VITE_API_BASE_URL=/php-api`.
+    *   Edit `/php-api/db_connect.php` on the server and set the correct production database credentials (host, user, password, database name).
+    *   Ensure the production database exists and has the correct schema (including `contact_submissions` table).
+    *   Ensure correct file/directory permissions (consult hosting provider documentation).
 
-5.  **Test:** Clear browser cache and access the site at `https://yourdomain.com/ReactDev/` and the dashboard at `https://yourdomain.com/ReactDev/admin-dashboard/`.
+5.  **Test:** Clear browser cache and access the site at `https://abcai.co.za/` and the dashboard at `https://abcai.co.za/admin/`.
 
 ## Key Configuration Files
 
--   `.cpanel.yml`: Defines the cPanel deployment steps.
--   `.gitignore`: Specifies intentionally untracked files (ensure `dist` folders are un-ignored for deployment).
+-   `.cpanel.yml`: Defines deployment steps (specific to the previous cPanel setup, may not apply to abcai.co.za).
+-   `.gitignore`: Specifies intentionally untracked files (ensure `dist` folders are un-ignored if committing build output).
 -   `package.json` (root): Configures npm workspaces and root-level scripts.
 -   `Hosting-Frontend/vite.config.ts`: Frontend build config (conditional `base` path).
 -   `Hosting-backend/vite.config.ts`: Backend dashboard build config (conditional `base` path).
