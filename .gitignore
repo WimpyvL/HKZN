@@ -4,7 +4,7 @@
 !.env.example
 
 # Local PHP Config Overrides
-php-api/db_connect.local.php
+HKZN-App/api/db_connect.local.php
 
 # IDE specific
 .idea/
@@ -21,8 +21,8 @@ logs/
 # Dependencies (covered by sub-project gitignores, but good practice)
 node_modules/
 
-# Build outputs (covered by sub-project gitignores, but good practice)
-# dist/ # Ignored generally, but unignore specific ones needed for deployment
+# Build outputs
 build/
-!Hosting-Frontend/dist/
-!Hosting-backend/dist/
+dist/
+HKZN-App/frontend/dist/
+HKZN-App/backend/dist/
