@@ -35,6 +35,21 @@ interface Agent {
   created_at?: string;
 }
 
+// Define ApiAgent type for raw data mapping
+interface ApiAgent {
+  id: string | number;
+  name: string;
+  email?: string | null; // Email might be null from API
+  phone?: string | null;
+  referral_code: string; // snake_case from API
+  active_clients?: number | string | null; // snake_case from API
+  total_sales?: number | string | null; // snake_case from API
+  commission_rate: string | number; // snake_case from API
+  status?: "active" | "inactive" | "pending";
+  join_date?: string | null; // snake_case from API
+  created_at?: string;
+}
+
 // Type expected by AgentFormModal (from lib/store.ts) for editing/viewing
 interface ModalAgent {
     id: string;
@@ -50,11 +65,9 @@ interface ModalAgent {
 }
 
 
-interface AgentsPageProps {
-  // Removed props
-}
+// Removed unused AgentsPageProps interface
 
-const AgentsPage = (/*{}: AgentsPageProps*/) => {
+const AgentsPage = () => { // Removed unused props parameter
 
   // Add state for agents, loading, error
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -79,15 +92,15 @@ const AgentsPage = (/*{}: AgentsPageProps*/) => {
         throw new Error(result.message || 'Failed to fetch agents.');
       }
       // Map API data (snake_case) to local Agent type
-      const fetchedAgents = Array.isArray(result.data) ? result.data.map((a: any) => ({
+      const fetchedAgents = Array.isArray(result.data) ? result.data.map((a: ApiAgent) => ({ // Use ApiAgent type
         id: a.id,
         name: a.name,
-        email: a.email ?? 'N/A', // Add email if available, otherwise 'N/A'
+        email: a.email ?? 'N/A',
         phone: a.phone ?? '',
         referralCode: a.referral_code,
-        activeClients: a.active_clients ?? 0,
-        totalSales: a.total_sales ?? 0,
-        commission_rate: a.commission_rate,
+        activeClients: Number(a.active_clients ?? 0), // Ensure number
+        totalSales: Number(a.total_sales ?? 0), // Ensure number
+        commission_rate: Number(a.commission_rate), // Ensure number
         status: a.status ?? 'active',
         joinDate: a.join_date ?? (a.created_at ? a.created_at.split(' ')[0] : new Date().toISOString().split('T')[0]),
         created_at: a.created_at,

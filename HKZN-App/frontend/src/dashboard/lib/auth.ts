@@ -1,7 +1,7 @@
 import { User } from "./store"; // Assuming User type is defined in store.ts
 
 // Get API base URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL; // Cast to any
 
 // Helper to handle fetch responses specifically for auth
 async function handleAuthResponse(response: Response) {
@@ -24,8 +24,8 @@ async function handleAuthResponse(response: Response) {
 }
 
 // --- Sign Up ---
-// userData might need specific fields depending on register.php requirements
-export async function signUp(email: string, password: string, userData: any) {
+// Define a more specific type for userData if possible
+export async function signUp(email: string, password: string, userData: Record<string, unknown>) { // Use Record<string, unknown>
   try {
     const response = await fetch(`${API_BASE_URL}/register.php`, {
       method: 'POST',
@@ -38,12 +38,12 @@ export async function signUp(email: string, password: string, userData: any) {
     return { success: result.success }; // Return only success status
   } catch (error) {
     console.error("Error signing up:", error);
-    return { success: false, error };
+    return { success: false, error: error as unknown }; // Cast error to unknown
   }
 }
 
 // --- Sign In ---
-export async function signIn(email: string, password: string): Promise<{ success: boolean; user: User | null; error?: any }> {
+export async function signIn(email: string, password: string): Promise<{ success: boolean; user: User | null; error?: unknown }> { // Use unknown for error
   try {
     const response = await fetch(`${API_BASE_URL}/login.php`, {
       method: 'POST',
@@ -69,12 +69,12 @@ export async function signIn(email: string, password: string): Promise<{ success
     }
   } catch (error) {
     console.error("Error signing in:", error);
-    return { success: false, user: null, error };
+    return { success: false, user: null, error: error as unknown }; // Cast error to unknown
   }
 }
 
 // --- Sign Out ---
-export async function signOut(): Promise<{ success: boolean; error?: any }> {
+export async function signOut(): Promise<{ success: boolean; error?: unknown }> { // Use unknown for error
   try {
     const response = await fetch(`${API_BASE_URL}/logout.php`, {
       method: 'POST', // Use POST or GET depending on logout.php implementation
@@ -86,12 +86,12 @@ export async function signOut(): Promise<{ success: boolean; error?: any }> {
     return { success: result.success };
   } catch (error) {
     console.error("Error signing out:", error);
-    return { success: false, error };
+    return { success: false, error: error as unknown }; // Cast error to unknown
   }
 }
 
 // --- Check Current Authentication Status ---
-export async function getCurrentUser(): Promise<{ success: boolean; user: User | null; error?: any }> {
+export async function getCurrentUser(): Promise<{ success: boolean; user: User | null; error?: unknown }> { // Use unknown for error
   try {
     const response = await fetch(`${API_BASE_URL}/check_auth.php`, {
       method: 'GET',
@@ -115,7 +115,7 @@ export async function getCurrentUser(): Promise<{ success: boolean; user: User |
   } catch (error) {
     console.error("Error getting current user:", error);
     // If the check itself fails (e.g., network error), return success: false
-    return { success: false, user: null, error };
+    return { success: false, user: null, error: error as unknown }; // Cast error to unknown
   }
 }
 

@@ -83,7 +83,7 @@ interface AppState {
   isAuthenticated: boolean;
   isLoadingAuth: boolean; // Renamed for clarity
   login: (email: string, password: string) => Promise<boolean>; // Removed isAgent
-  register: (userData: any) => Promise<boolean>;
+  register: (userData: Record<string, unknown>) => Promise<boolean>; // Use Record<string, unknown>
   logout: () => Promise<void>; // Make async
   checkAuth: () => Promise<void>;
   initializeData: () => Promise<void>; // Add helper action type
@@ -151,10 +151,13 @@ const stateCreator: StateCreator<AppState> = (set, get) => ({
       return false;
     }
   },
-  register: async (userData) => {
+  register: async (userData: Record<string, unknown>) => { // Add type annotation here too
     try {
+      // Extract email and password, ensuring they are strings
+      const email = String(userData.email ?? '');
+      const password = String(userData.password ?? '');
       // Use refactored authApi.signUp
-      const result = await authApi.signUp(userData.email, userData.password, userData);
+      const result = await authApi.signUp(email, password, userData);
       return result.success;
     } catch (error) {
       console.error("Store registration error:", error);

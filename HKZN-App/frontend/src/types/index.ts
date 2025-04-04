@@ -69,14 +69,14 @@ export interface Commission {
 export interface Settings {
   id: string;
   key: string;
-  value: any;
+  value: unknown; // Use unknown instead of any
   created_at: string;
   updated_at: string;
 }
 
 export interface AuthState {
-  session: any | null;
-  user: any | null;
+  session: unknown | null; // Use unknown instead of any
+  user: unknown | null; // Use unknown instead of any
   profile: Profile | null;
   isLoading: boolean;
   isAdmin: boolean;

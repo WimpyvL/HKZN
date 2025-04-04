@@ -34,12 +34,9 @@ interface Transaction {
   paymentMethod: string;
 }
 
-interface TransactionsPageProps {
-  // Removed props
-}
 
 
-const TransactionsPage = (/*{}: TransactionsPageProps*/) => {
+const TransactionsPage = () => {
 
   // Add state for transactions, loading, error
   const [transactions, setTransactions] = useState<Transaction[]>([]);

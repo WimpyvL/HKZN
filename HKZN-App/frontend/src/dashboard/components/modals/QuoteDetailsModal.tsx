@@ -58,15 +58,19 @@ interface QuoteDetailsModalProps {
 }
 
 // Helper to safely parse JSON strings
-const safeParseJson = (jsonString: string | object | null | undefined): any => {
-  if (!jsonString) return null;
-  if (typeof jsonString === 'object') return jsonString; // Already an object
-  try {
-    return JSON.parse(jsonString);
-  } catch (e) {
-    console.error("Failed to parse JSON string:", jsonString, e);
-    return null; // Return null or a default object on error
+const safeParseJson = <T,>(jsonData: T | string | null | undefined): T | null => {
+  if (!jsonData) return null;
+  if (typeof jsonData === 'object') return jsonData as T; // Already an object
+  if (typeof jsonData === 'string') {
+    try {
+      return JSON.parse(jsonData) as T;
+    } catch (e) {
+      console.error("Failed to parse JSON string:", jsonData, e);
+      return null; // Return null on parsing error
+    }
   }
+  // If it's neither string nor object (and not null/undefined), return null
+  return null;
 };
 
 // Helper to format currency

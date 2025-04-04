@@ -13,7 +13,7 @@ interface ViewDetailsModalProps {
   open: boolean;
   onClose: () => void;
   title: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>; // Use unknown instead of any
   onEdit?: () => void;
 }
 
@@ -25,7 +25,7 @@ const ViewDetailsModal = ({
   onEdit,
 }: ViewDetailsModalProps) => {
   // Helper function to format values for display
-  const formatValue = (key: string, value: any) => {
+  const formatValue = (key: string, value: unknown): React.ReactNode => { // Return ReactNode
     if (key === "commissionRate" && typeof value === "number") {
       return `${(value * 100).toFixed(1)}%`;
     }
@@ -42,7 +42,7 @@ const ViewDetailsModal = ({
     if (value === null || value === undefined) {
       return "-";
     }
-    if (key === "status") {
+    if (key === "status" && typeof value === 'string') { // Check if value is string for status
       return (
         <Badge
           variant="secondary"
@@ -56,7 +56,18 @@ const ViewDetailsModal = ({
         </Badge>
       );
     }
-    return value;
+    // Ensure the final return value is compatible with ReactNode
+    if (typeof value === 'string' || typeof value === 'number') {
+        return value; // Strings and numbers are valid ReactNode
+    }
+    if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No'; // Convert boolean to string
+    }
+    if (value === null || value === undefined) {
+        return null; // Return null for null/undefined, which is a valid ReactNode
+    }
+    // For other types (like objects), return a string representation or placeholder
+    return JSON.stringify(value);
   };
 
   // Filter out fields we don't want to display

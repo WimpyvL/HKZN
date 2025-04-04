@@ -35,6 +35,31 @@ interface CommissionPayout {
   payment_date?: string | null;
 }
 
+// Define ApiTransaction type for raw data mapping
+interface ApiTransaction {
+  id: string | number;
+  date: string;
+  amount: string | number;
+  commission: string | number;
+  status: "completed" | "pending" | "failed" | "refunded";
+  agent_id?: string | number | null;
+  client_id?: string | number | null;
+  product_id?: string | number | null;
+  payment_method?: string;
+  created_at?: string;
+}
+
+// Define ApiPayout type for raw data mapping
+interface ApiPayout {
+  id: string | number;
+  agent_id: string | number;
+  amount: string | number;
+  period: string;
+  status: "pending" | "processed" | "failed";
+  payment_date?: string | null;
+}
+
+
 const AgentCommissions = () => {
   // const { currentUser, transactions, commissionPayouts } = useStore(); // Remove useStore
 
@@ -68,13 +93,16 @@ const AgentCommissions = () => {
       if (!payoutsResult.success) throw new Error(payoutsResult.message || 'Failed to fetch payouts.');
 
       // Filter data for the current agent
-      const agentTransactions = Array.isArray(transactionsResult.data)
-        ? transactionsResult.data.filter((tx: any) => String(tx.agent_id) === String(currentAgentId))
+      const agentTransactions: Transaction[] = Array.isArray(transactionsResult.data) // Explicitly type filtered array
+        ? transactionsResult.data.filter((tx: ApiTransaction) => String(tx.agent_id) === String(currentAgentId)) // Use ApiTransaction type
+        // TODO: Add mapping from ApiTransaction to Transaction if needed
         : [];
-      const agentPayouts = Array.isArray(payoutsResult.data)
-        ? payoutsResult.data.filter((p: any) => String(p.agent_id) === String(currentAgentId))
+      const agentPayouts: CommissionPayout[] = Array.isArray(payoutsResult.data) // Explicitly type filtered array
+        ? payoutsResult.data.filter((p: ApiPayout) => String(p.agent_id) === String(currentAgentId)) // Use ApiPayout type
+         // TODO: Add mapping from ApiPayout to CommissionPayout if needed
         : [];
 
+      // Assuming direct assignment works for now if types are compatible enough
       setTransactions(agentTransactions);
       setPayouts(agentPayouts);
 

@@ -24,15 +24,10 @@ interface Agent {
   commission_rate: number; // From API
 }
 
-interface AgentsTableProps {
-  // Remove props if data is fetched internally
-  // onSort?: (column: keyof Agent) => void;
-}
 
 // Remove defaultAgents array
 
-const AgentsTable = (/*{ onSort = () => {} }: AgentsTableProps*/) => {
-  // const { agents } = useStore(); // Remove useStore
+const AgentsTable = () => {
 
   // Add state for agents, loading, error
   const [agents, setAgents] = useState<Agent[]>([]);

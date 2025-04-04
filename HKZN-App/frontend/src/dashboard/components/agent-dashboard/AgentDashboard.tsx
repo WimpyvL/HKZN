@@ -35,6 +35,44 @@ interface Transaction {
 }
 interface Product { id: string | number; name: string; isActive?: boolean; /* other fields */ }
 
+// Define ApiClient type for raw data mapping
+interface ApiClient {
+  id: string | number;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string | null;
+  referred_by_agent_id?: string | number | null; // snake_case from API
+  product_id?: string | number | null; // snake_case from API
+  status: "active" | "inactive" | "pending";
+  created_at: string;
+  join_date?: string; // snake_case from API
+}
+
+// Define ApiTransaction type for raw data mapping
+interface ApiTransaction {
+  id: string | number;
+  date: string;
+  amount: string | number;
+  commission: string | number;
+  status: "completed" | "pending" | "failed" | "refunded";
+  agent_id?: string | number | null;
+  client_id?: string | number | null;
+  product_id?: string | number | null;
+  payment_method?: string;
+  created_at?: string;
+}
+
+// Define ApiPayout type for raw data mapping (needed for AgentCommissions, but adding here for consistency if needed later)
+interface ApiPayout {
+  id: string | number;
+  agent_id: string | number;
+  amount: string | number;
+  period: string;
+  status: "pending" | "processed" | "failed";
+  payment_date?: string | null;
+}
+
 const AgentDashboard = () => {
   const { currentUser } = useAppStore(); // Corrected hook name
   const navigate = useNavigate();
@@ -79,13 +117,16 @@ const AgentDashboard = () => {
       if (!productsResult.success) throw new Error(productsResult.message || 'Failed to fetch products.');
 
       // Filter data specifically for the current agent
-      const agentClients = Array.isArray(clientsResult.data)
-        ? clientsResult.data.filter((c: any) => String(c.referred_by_agent_id) === String(currentAgentId))
+      const agentClients: Client[] = Array.isArray(clientsResult.data) // Explicitly type filtered array
+        ? clientsResult.data.filter((c: ApiClient) => String(c.referred_by_agent_id) === String(currentAgentId)) // Use ApiClient type
+        // TODO: Add mapping from ApiClient to Client if needed
         : [];
-      const agentTransactions = Array.isArray(transactionsResult.data)
-        ? transactionsResult.data.filter((t: any) => String(t.agent_id) === String(currentAgentId))
+      const agentTransactions: Transaction[] = Array.isArray(transactionsResult.data) // Explicitly type filtered array
+        ? transactionsResult.data.filter((t: ApiTransaction) => String(t.agent_id) === String(currentAgentId)) // Use ApiTransaction type
+        // TODO: Add mapping from ApiTransaction to Transaction if needed
         : [];
 
+      // Assuming direct assignment works for now if types are compatible enough
       setClients(agentClients);
       setTransactions(agentTransactions);
       setProducts(Array.isArray(productsResult.data) ? productsResult.data : []);

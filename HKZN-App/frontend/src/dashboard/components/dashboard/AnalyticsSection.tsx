@@ -29,13 +29,10 @@ interface Transaction {
   paymentMethod: string;
 }
 
-interface AnalyticsSectionProps {
-  // Removed props
-}
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF", "#FF4560"]; // Added more colors
 
-const AnalyticsSection = (/*{}: AnalyticsSectionProps*/) => {
+const AnalyticsSection = () => {
 
   // Add state for transactions, loading, error
   const [transactions, setTransactions] = useState<Transaction[]>([]);

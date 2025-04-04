@@ -7,7 +7,78 @@ import {
   // Settings - Removed as no PHP API endpoints exist for settings
 } from "./store"; // Assuming types are defined here or imported
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// Define types for raw API data (snake_case)
+interface ApiAgent {
+  id: string | number;
+  name: string;
+  email?: string | null;
+  phone?: string | null;
+  referral_code: string;
+  active_clients?: number | string | null;
+  total_sales?: number | string | null;
+  commission_rate: string | number;
+  status?: "active" | "inactive" | "pending";
+  join_date?: string | null;
+  created_at?: string;
+}
+
+interface ApiClient {
+  id: string | number;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string | null;
+  referred_by_agent_id?: string | number | null;
+  referred_by_agent_name?: string | null; // Added for mapping
+  product_id?: string | number | null;
+  product_name?: string | null; // Added for mapping
+  status: "active" | "inactive" | "pending";
+  created_at: string;
+  join_date?: string;
+}
+
+interface ApiProduct {
+  id: string | number;
+  name: string;
+  description: string;
+  price: string | number;
+  commission_rate: string | number;
+  features: string[] | string;
+  category: string;
+  is_active?: boolean | number | string;
+  created_at?: string;
+}
+
+interface ApiTransaction {
+  id: string | number;
+  transaction_date: string; // snake_case from API
+  agent_id?: string | number | null;
+  client_id?: string | number | null;
+  product_id?: string | number | null;
+  agent_name?: string | null; // Added for mapping
+  client_name?: string | null; // Added for mapping
+  product_name?: string | null; // Added for mapping
+  amount: string | number;
+  commission_amount: string | number; // snake_case from API
+  status: "completed" | "pending" | "failed" | "refunded";
+  payment_method?: string;
+  notes?: string | null;
+  created_at?: string;
+}
+
+interface ApiPayout {
+  id: string | number;
+  agent_id: string | number;
+  agent_name?: string | null; // Added for mapping
+  amount: string | number;
+  period: string;
+  status: "pending" | "processed" | "failed";
+  payment_date?: string | null;
+  transaction_ids?: string[] | string; // Can be JSON string or array
+}
+
+
+const API_BASE_URL = (import.meta as any).env.VITE_API_BASE_URL; // Cast to any
 
 // Helper function to handle API responses
 async function handleApiResponse(response: Response) {
@@ -34,17 +105,6 @@ async function handleApiResponse(response: Response) {
   return result.data; // Return only the data part on success
 }
 
-// Helper to convert camelCase keys to snake_case for sending data to PHP
-// function camelToSnake(obj: Record<string, any>): Record<string, any> {
-//     const newObj: Record<string, any> = {};
-//     for (const key in obj) {
-//         if (Object.prototype.hasOwnProperty.call(obj, key)) {
-//             const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-//             newObj[snakeKey] = obj[key];
-//         }
-//     }
-//     return newObj;
-// }
 
 // --- Agents API ---
 
@@ -54,7 +114,7 @@ export async function fetchAgents(): Promise<Agent[]> {
     const data = await handleApiResponse(response);
 
     // Transform from database format (snake_case) to app format (camelCase)
-    const agents: Agent[] = data.map((agent: any) => ({
+    const agents: Agent[] = data.map((agent: ApiAgent) => ({ // Use ApiAgent type
       id: agent.id,
       // userId: agent.user_id, // Removed: Not in Agent type
       name: agent.name,
@@ -63,9 +123,9 @@ export async function fetchAgents(): Promise<Agent[]> {
       referralCode: agent.referral_code,
       activeClients: agent.active_clients || 0,
       totalSales: agent.total_sales || 0,
-      commissionRate: parseFloat(agent.commission_rate) || 0, // Ensure number
+      commissionRate: Number(agent.commission_rate) || 0, // Ensure number
       status: agent.status,
-      joinDate: agent.join_date,
+      joinDate: agent.join_date ?? undefined, // Handle null join_date
     }));
     return agents;
   // } catch (error) {
@@ -139,16 +199,18 @@ export async function fetchClients(): Promise<Client[]> {
     const data = await handleApiResponse(response);
 
     // Transform from database format to app format
-    const clients: Client[] = data.map((client: any) => ({
+    const clients: Client[] = data.map((client: ApiClient) => ({ // Use ApiClient type
       id: client.id,
       name: client.name,
       email: client.email,
       phone: client.phone,
       address: client.address || undefined,
-      referredBy: client.referred_by_agent_name || `AgentID: ${client.referred_by_agent_id}`, // Use agent name (string) - PHP needs to provide this
-      product: client.product_name || `ProductID: ${client.product_id}`, // Use product name (string) - PHP needs to provide this
+      referredBy: client.referred_by_agent_name || `AgentID: ${client.referred_by_agent_id ?? 'N/A'}`, // Use agent name (string) - PHP needs to provide this
+      product: client.product_name || `ProductID: ${client.product_id ?? 'N/A'}`, // Use product name (string) - PHP needs to provide this
       status: client.status,
-      joinDate: client.join_date,
+      joinDate: client.join_date ?? undefined, // Handle null join_date
+      // Map other fields if needed
+      created_at: client.created_at, // Keep original created_at if needed
     }));
     return clients;
   // } catch (error) {
@@ -229,15 +291,17 @@ export async function fetchProducts(): Promise<Product[]> {
     const data = await handleApiResponse(response);
 
     // Transform from database format to app format
-    const products: Product[] = data.map((product: any) => ({
+    const products: Product[] = data.map((product: ApiProduct) => ({ // Use ApiProduct type
       id: product.id,
       name: product.name,
       description: product.description,
       price: parseFloat(product.price) || 0,
-      commissionRate: parseFloat(product.commission_rate) || 0,
+      commissionRate: Number(product.commission_rate) || 0, // Ensure number
       features: typeof product.features === 'string' ? JSON.parse(product.features || '[]') : (product.features || []), // Handle JSON string or object
       isActive: !!product.is_active, // Ensure boolean
       category: product.category,
+      // Map other fields if needed
+      created_at: product.created_at, // Keep original created_at if needed
     }));
     return products;
   // } catch (error) {
@@ -305,20 +369,22 @@ export async function fetchTransactions(): Promise<Transaction[]> {
     const data = await handleApiResponse(response);
 
     // Transform from database format to app format
-    const transactions: Transaction[] = data.map((tx: any) => ({
+    const transactions: Transaction[] = data.map((tx: ApiTransaction) => ({ // Use ApiTransaction type
       id: tx.id,
       date: tx.transaction_date,
-      agentId: tx.agent_id,
-      clientId: tx.client_id,
-      productId: tx.product_id,
-      agentName: tx.agent_name || `Agent ID: ${tx.agent_id}`,
-      clientName: tx.client_name || `Client ID: ${tx.client_id}`,
-      productName: tx.product_name || `Product ID: ${tx.product_id}`,
-      amount: parseFloat(tx.amount) || 0,
-      commission: parseFloat(tx.commission_amount) || 0,
+      agentId: tx.agent_id ?? undefined, // Handle null IDs
+      clientId: tx.client_id ?? undefined, // Handle null IDs
+      productId: tx.product_id ?? undefined, // Handle null IDs
+      agentName: tx.agent_name || `Agent ID: ${tx.agent_id ?? 'N/A'}`,
+      clientName: tx.client_name || `Client ID: ${tx.client_id ?? 'N/A'}`,
+      productName: tx.product_name || `Product ID: ${tx.product_id ?? 'N/A'}`,
+      amount: Number(tx.amount) || 0, // Ensure number
+      commission: Number(tx.commission_amount) || 0, // Ensure number
       status: tx.status,
       paymentMethod: tx.payment_method,
       notes: tx.notes || undefined,
+      // Map other fields if needed
+      created_at: tx.created_at, // Keep original created_at if needed
     }));
     return transactions;
   // } catch (error) {
@@ -332,9 +398,9 @@ export async function createTransaction(transaction: Omit<Transaction, "id">): P
     // Transform to database format - Sending IDs is more robust
     const dbTransaction = {
         transaction_date: transaction.date || new Date().toISOString().split('T')[0],
-        agent_id: transaction.agentId, // Send ID
-        client_id: transaction.clientId, // Send ID
-        product_id: transaction.productId, // Send ID
+        agent_id: String(transaction.agentId ?? ''), // Ensure string or empty string
+        client_id: String(transaction.clientId ?? ''), // Ensure string or empty string
+        product_id: String(transaction.productId ?? ''), // Ensure string or empty string
         amount: transaction.amount,
         commission_amount: transaction.commission,
         status: transaction.status,
@@ -388,15 +454,16 @@ export async function fetchCommissionPayouts(): Promise<CommissionPayout[]> {
     const data = await handleApiResponse(response);
 
     // Transform from database format to app format
-    const payouts: CommissionPayout[] = data.map((payout: any) => ({
+    const payouts: CommissionPayout[] = data.map((payout: ApiPayout) => ({ // Use ApiPayout type
       id: payout.id,
       agentId: payout.agent_id,
       agentName: payout.agent_name || `Agent ID: ${payout.agent_id}`,
-      amount: parseFloat(payout.amount) || 0,
+      amount: Number(payout.amount) || 0, // Ensure number
       period: payout.period,
       status: payout.status,
       paymentDate: payout.payment_date || undefined,
-      transactionIds: typeof payout.transaction_ids === 'string' ? JSON.parse(payout.transaction_ids || '[]') : (payout.transaction_ids || []),
+      transactionIds: typeof payout.transaction_ids === 'string' ? JSON.parse(payout.transaction_ids || '[]') : (payout.transaction_ids || []), // Handle JSON string or array
+      // Map other fields if needed
     }));
     return payouts;
   // } catch (error) {

@@ -27,11 +27,8 @@ interface Transaction {
   paymentMethod: string;
 }
 
-interface SalesReportProps {
-  // Removed props
-}
 
-const SalesReport = (/*{}: SalesReportProps*/) => {
+const SalesReport = () => {
 
   // Add state for transactions, loading, error
   const [transactions, setTransactions] = useState<Transaction[]>([]);

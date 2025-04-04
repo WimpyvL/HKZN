@@ -54,6 +54,20 @@ interface Client {
   updated_at?: string; // Added from schema
 }
 
+// Define ApiClient type for raw data mapping
+interface ApiClient {
+  id: string | number;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string | null;
+  referred_by_agent_id?: string | number | null; // snake_case from API
+  product_id?: string | number | null; // snake_case from API
+  status: "active" | "inactive" | "pending";
+  created_at: string;
+  join_date?: string; // snake_case from API
+}
+
 // Type expected by ClientFormModal (from lib/store.ts)
 interface ModalClient {
     id: string;
@@ -68,11 +82,9 @@ interface ModalClient {
 }
 
 
-interface ClientsPageProps {
-  // Removed props
-}
+// Removed unused ClientsPageProps interface
 
-const ClientsPage = (/*{}: ClientsPageProps*/) => {
+const ClientsPage = () => { // Removed unused props parameter
 
   // Add state for clients, loading, error
   const [clients, setClients] = useState<Client[]>([]);
@@ -106,10 +118,18 @@ const ClientsPage = (/*{}: ClientsPageProps*/) => {
         if (!result.success) {
           throw new Error(result.message || 'Failed to fetch clients.');
         }
-        const fetchedClients = Array.isArray(result.data) ? result.data.map((c: any) => ({
-          ...c,
+        const fetchedClients = Array.isArray(result.data) ? result.data.map((c: ApiClient) => ({ // Use ApiClient type
+          id: c.id,
+          name: c.name,
+          email: c.email,
+          phone: c.phone,
+          address: c.address,
+          referred_by_agent_id: c.referred_by_agent_id,
+          product_id: c.product_id,
           status: c.status ?? 'pending',
           joinDate: c.join_date ?? (c.created_at ? c.created_at.split(' ')[0] : new Date().toISOString().split('T')[0]),
+          created_at: c.created_at,
+          // Map other fields if needed for Client type
         })) : [];
         setClients(fetchedClients);
       } catch (err: unknown) {

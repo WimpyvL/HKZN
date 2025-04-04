@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
 import Sidebar from '@/dashboard/components/dashboard/Sidebar'; // Corrected path
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -63,9 +63,9 @@ const QuotesPage: React.FC = () => {
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null); // State for selected quote data
 
   // Get API base URL from environment variables
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiBaseUrl = (import.meta as any).env.VITE_API_BASE_URL; // Cast to any for now
 
-  const fetchQuotes = async () => {
+  const fetchQuotes = useCallback(async () => { // Wrap in useCallback
     setLoading(true);
     setError(null);
     try {
@@ -90,12 +90,12 @@ const QuotesPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiBaseUrl]); // Add apiBaseUrl as dependency
 
 
   useEffect(() => {
     fetchQuotes();
-  }, [apiBaseUrl]); // Dependency array includes apiBaseUrl
+  }, [fetchQuotes]);
 
   // --- Status Update Handler ---
   const handleStatusChange = async (quoteId: number, newStatus: string) => {

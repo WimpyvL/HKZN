@@ -19,17 +19,30 @@ import { Mail, Phone } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Define types locally
-interface Client {
+interface ApiClient { // Type for raw API data
   id: string | number;
   name: string;
   email: string;
   phone: string;
-  referred_by_agent_id?: string | number | null;
-  product_id?: string | number | null; // Not in clients table, but maybe needed for display?
+  address?: string | null;
+  referred_by_agent_id?: string | number | null; // snake_case from API
+  product_id?: string | number | null; // snake_case from API
+  status: "active" | "inactive" | "pending";
+  created_at: string;
+  join_date?: string; // snake_case from API
+}
+
+interface Client { // Type for processed data
+  id: string | number;
+  name: string;
+  email: string;
+  phone: string;
+  referredByAgentId?: string | number | null; // Use camelCase
+  productId?: string | number | null; // Use camelCase
   product?: string; // Mapped later
   status: "active" | "inactive" | "pending";
-  joinDate?: string;
-  created_at?: string;
+  joinDate?: string; // Use camelCase
+  createdAt?: string; // Use camelCase
   address?: string;
   notes?: string;
 }
@@ -78,18 +91,25 @@ const AgentClients = () => {
       // Map product data for easier lookup
       const productMap = new Map<string | number, string>();
       if (Array.isArray(productsResult.data)) {
-          productsResult.data.forEach((p: any) => productMap.set(p.id, p.name));
+          productsResult.data.forEach((p: Product) => productMap.set(p.id, p.name));
       }
       setProducts(Array.isArray(productsResult.data) ? productsResult.data : []); // Store full product data if needed
 
       // Map and filter clients
       const fetchedClients = Array.isArray(clientsResult.data) ? clientsResult.data
-        .filter((c: any) => String(c.referred_by_agent_id) === String(currentAgentId)) // Filter by agent ID
-        .map((c: any) => ({
-          ...c,
+        .filter((c: ApiClient) => String(c.referred_by_agent_id) === String(currentAgentId)) // Filter by agent ID, use ApiClient type
+        .map((c: ApiClient) => ({ // Use ApiClient type
+          id: c.id,
+          name: c.name,
+          email: c.email,
+          phone: c.phone,
+          address: c.address,
+          referredByAgentId: c.referred_by_agent_id,
+          productId: c.product_id,
           status: c.status ?? 'pending',
           joinDate: c.join_date ?? (c.created_at ? c.created_at.split(' ')[0] : new Date().toISOString().split('T')[0]),
-          product: productMap.get(c.product_id) || `ID: ${c.product_id ?? 'N/A'}`, // Map product ID to name
+          createdAt: c.created_at,
+          product: productMap.get(c.product_id ?? '') || `ID: ${c.product_id ?? 'N/A'}`, // Map product ID to name
         })) : [];
       setClients(fetchedClients);
 
@@ -116,7 +136,7 @@ const AgentClients = () => {
       client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (client.phone && client.phone.includes(searchQuery));
     const matchesStatus = statusFilter === "all" || client.status === statusFilter;
-    const matchesProduct = productFilter === "all" || String(client.product_id) === productFilter; // Filter by ID for now
+    const matchesProduct = productFilter === "all" || String(client.productId) === productFilter; // Corrected property name
     return matchesSearch && matchesStatus && matchesProduct;
   });
 

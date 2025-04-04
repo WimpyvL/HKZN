@@ -21,6 +21,19 @@ interface Product {
   created_at?: string;
 }
 
+// Define ApiProduct type for raw data mapping
+interface ApiProduct {
+  id: string | number;
+  name: string;
+  description: string;
+  price: string | number;
+  commission_rate: string | number; // Use snake_case from API
+  features: string[] | string;
+  category: string;
+  is_active?: boolean | number | string; // Use snake_case from API
+  created_at?: string;
+}
+
 const ProductSelection = () => {
   // const { products } = useStore(); // Remove useStore
 
@@ -38,15 +51,15 @@ const ProductSelection = () => {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       if (!result.success) throw new Error(result.message || 'Failed to fetch products.');
-      const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: any) => ({
+      const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: ApiProduct) => ({
            id: p.id,
            name: p.name,
            description: p.description,
            price: Number(p.price) || 0,
-           commissionRate: Number(p.commission_rate) || 0,
-           features: Array.isArray(p.features) ? p.features : (typeof p.features === 'string' ? JSON.parse(p.features || '[]') : []),
+           commissionRate: Number(p.commission_rate) || 0, // Map snake_case
+           features: Array.isArray(p.features) ? p.features : (typeof p.features === 'string' ? JSON.parse(p.features || '[]') : []), // Handle JSON string or array
            category: p.category,
-           isActive: p.is_active ?? true,
+           isActive: p.is_active ?? true, // Map snake_case
            created_at: p.created_at
        })) : [];
       setProducts(fetchedProducts);

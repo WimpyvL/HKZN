@@ -69,6 +69,18 @@ interface Product {
   created_at?: string;
 }
 
+// Define ApiProduct type for raw data mapping
+interface ApiProduct {
+  id: string | number;
+  name: string;
+  description: string;
+  price: string | number;
+  commission_rate: string | number; // Use snake_case from API
+  features: string[] | string;
+  category: string;
+  is_active?: boolean | number | string; // Use snake_case from API
+  created_at?: string;
+}
 
 const ProductManagement = () => {
 
@@ -95,7 +107,7 @@ const ProductManagement = () => {
           throw new Error(result.message || 'Failed to fetch products.');
         }
         // Map API data (snake_case) to local Product type (camelCase)
-        const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: any) => ({
+        const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: ApiProduct) => ({ // Use ApiProduct type
              id: p.id,
              name: p.name,
              description: p.description,
@@ -516,7 +528,7 @@ const ProductManagement = () => {
                       <Label htmlFor="category">Product Category</Label>
                       <select id="category" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ..."
                         value={editingProduct ? editingProduct.category : newProduct.category}
-                        onChange={(e) => editingProduct ? setEditingProduct({ ...editingProduct, category: e.target.value as any }) : setNewProduct({ ...newProduct, category: e.target.value as any })}
+                        onChange={(e) => editingProduct ? setEditingProduct({ ...editingProduct, category: e.target.value }) : setNewProduct({ ...newProduct, category: e.target.value })} // Removed 'as any'
                       >
                         {Object.entries(productCategories).map(([key, category]) => (<option key={key} value={key}>{category.name}</option>))}
                       </select>

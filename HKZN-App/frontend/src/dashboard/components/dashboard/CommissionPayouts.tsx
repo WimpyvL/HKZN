@@ -27,11 +27,8 @@ interface CommissionPayout {
   payment_date?: string | null; // From API
 }
 
-interface CommissionPayoutsProps {
-  // Removed props
-}
 
-const CommissionPayouts = (/*{}: CommissionPayoutsProps*/) => {
+const CommissionPayouts = () => {
 
   // Add state for payouts, loading, error
   const [payouts, setPayouts] = useState<CommissionPayout[]>([]);

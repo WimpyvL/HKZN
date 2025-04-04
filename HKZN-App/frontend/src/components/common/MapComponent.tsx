@@ -51,7 +51,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
     return () => {
       newMap.remove();
     };
-  }, [mapContainer.current, lng, lat, address, mapboxToken]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
+  }, [lng, lat, zoom, address, mapboxToken]); // Added zoom, removed mapContainer.current
 
   return <div ref={mapContainer} className={`${className} rounded-lg`} />;
 };

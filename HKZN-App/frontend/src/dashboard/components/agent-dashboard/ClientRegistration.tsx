@@ -22,6 +22,19 @@ interface Product {
   created_at?: string;
 }
 
+// Define ApiProduct type for raw data mapping
+interface ApiProduct {
+  id: string | number;
+  name: string;
+  description: string;
+  price: string | number;
+  commission_rate: string | number; // Use snake_case from API
+  features: string[] | string;
+  category: string;
+  is_active?: boolean | number | string; // Use snake_case from API
+  created_at?: string;
+}
+
 const ClientRegistration = () => {
   const { currentUser } = useAppStore(); // Corrected hook name
   // const { products, addClient } = useAppStore(); // Remove store usage for products/addClient
@@ -47,7 +60,7 @@ const ClientRegistration = () => {
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const result = await response.json();
       if (!result.success) throw new Error(result.message || 'Failed to fetch products.');
-      const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: any) => ({
+      const fetchedProducts = Array.isArray(result.data) ? result.data.map((p: ApiProduct) => ({ // Use ApiProduct type
            id: p.id,
            name: p.name,
            description: p.description,

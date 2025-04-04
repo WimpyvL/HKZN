@@ -39,16 +39,18 @@ const StatItem: React.FC<StatItemProps> = ({ value, label, delay = 0 }) => {
       { threshold: 0.1 }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
+    const currentRef = ref.current; // Copy ref.current to a variable
+
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current);
+      if (currentRef) { // Use the variable in the cleanup
+        observer.unobserve(currentRef);
       }
     };
-  }, [value, hasAnimated, delay]);
+  }, [value, hasAnimated, delay]); // Keep dependencies as they are relevant to the effect's logic
 
   return (
     <div ref={ref} className="text-center">
