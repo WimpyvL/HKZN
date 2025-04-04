@@ -29,7 +29,23 @@ import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import ServiceWizardPage from "./pages/ServiceWizard"; // Import the new wizard page
+import ServiceWizardPage from "./pages/ServiceWizard";
+
+// --- Dashboard Imports (adjust paths) ---
+import AdminHome from "./dashboard/components/home"; // Renamed to avoid conflict with frontend Home/Index
+import AgentsPage from "./dashboard/components/agents/AgentsPage";
+import ClientsPage from "./dashboard/components/clients/ClientsPage";
+import TransactionsPage from "./dashboard/components/transactions/TransactionsPage";
+import SettingsPage from "./dashboard/components/settings/SettingsPage";
+import AgentDashboard from "./dashboard/components/agent-dashboard/AgentDashboard";
+import ProductManagement from "./dashboard/components/admin/ProductManagement";
+import WebProductsPage from "./dashboard/components/admin/WebProductsPage";
+import FiberProductsPage from "./dashboard/components/admin/FiberProductsPage";
+import SolarProductsPage from "./dashboard/components/admin/SolarProductsPage";
+import QuotesPage from "./dashboard/components/admin/QuotesPage";
+import AdminCommissionPayouts from "./dashboard/components/dashboard/AdminCommissionPayouts";
+// Note: LoadingScreen and NotFoundPage might conflict, use frontend versions or rename.
+// Assuming frontend's NotFound is used. DashboardSelector might need a dedicated route if required.
 
 const queryClient = new QueryClient();
 
@@ -66,34 +82,32 @@ const App = () => {
                 {/* Auth routes */}
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
-                
-                {/* Admin routes */}
-                <Route 
-                  path="/admin/dashboard" 
-                  element={
-                    <ProtectedRoute requiredRole="admin">
-                      <div className="p-8">
-                        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-                        <p className="text-gray-500">Coming soon</p>
-                      </div>
-                    </ProtectedRoute>
-                  } 
-                />
-                
-                {/* Agent routes */}
-                <Route 
-                  path="/agent/dashboard" 
+
+                {/* --- Admin Dashboard Routes --- */}
+                <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHome /></ProtectedRoute>} />
+                <Route path="/admin/quotes" element={<ProtectedRoute requiredRole="admin"><QuotesPage /></ProtectedRoute>} />
+                <Route path="/admin/agents" element={<ProtectedRoute requiredRole="admin"><AgentsPage /></ProtectedRoute>} />
+                <Route path="/admin/clients" element={<ProtectedRoute requiredRole="admin"><ClientsPage /></ProtectedRoute>} />
+                <Route path="/admin/products" element={<ProtectedRoute requiredRole="admin"><ProductManagement /></ProtectedRoute>} />
+                <Route path="/admin/products/web" element={<ProtectedRoute requiredRole="admin"><WebProductsPage /></ProtectedRoute>} />
+                <Route path="/admin/products/fiber" element={<ProtectedRoute requiredRole="admin"><FiberProductsPage /></ProtectedRoute>} />
+                <Route path="/admin/products/solar" element={<ProtectedRoute requiredRole="admin"><SolarProductsPage /></ProtectedRoute>} />
+                <Route path="/admin/transactions" element={<ProtectedRoute requiredRole="admin"><TransactionsPage /></ProtectedRoute>} />
+                <Route path="/admin/settings" element={<ProtectedRoute requiredRole="admin"><SettingsPage /></ProtectedRoute>} />
+                <Route path="/admin/commissions" element={<ProtectedRoute requiredRole="admin"><AdminCommissionPayouts /></ProtectedRoute>} />
+
+                {/* --- Agent Dashboard Routes --- */}
+                {/* Using ProtectedRoute from frontend context */}
+                <Route
+                  path="/agent/*"
                   element={
                     <ProtectedRoute requiredRole="agent">
-                      <div className="p-8">
-                        <h1 className="text-2xl font-bold">Agent Dashboard</h1>
-                        <p className="text-gray-500">Coming soon</p>
-                      </div>
+                      <AgentDashboard />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                
-                {/* Catch-all route */}
+
+                {/* Catch-all route (Keep frontend's) */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </TooltipProvider>
