@@ -3,6 +3,9 @@
 .env.*
 !.env.example
 
+# Local PHP Config Overrides
+HKZN-App/api/db_connect.local.php
+
 # IDE specific
 .idea/
 .vscode/
@@ -18,6 +21,8 @@ logs/
 # Dependencies (covered by sub-project gitignores, but good practice)
 node_modules/
 
-# Build outputs (covered by sub-project gitignores, but good practice)
-dist/
+# Build outputs
 build/
+dist/ # Ignore root dist if any
+# HKZN-App/frontend/dist/ # DO NOT ignore frontend dist - needed for cPanel deployment
+# HKZN-App/backend/dist/ # Backend removed

@@ -4,14 +4,10 @@ deployment:
     # Set the deployment path to the React subdirectory
     - export DEPLOYPATH=/home/domkzn/public_html/React
 
-    # Deploy Frontend into the React directory
+    # Deploy Frontend (built assets) into the React directory
     - /bin/mkdir -p $DEPLOYPATH # Ensure React directory exists
-    - /bin/cp -R Hosting-Frontend/dist/. $DEPLOYPATH/
+    - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/ # Copy contents of dist
 
-    # Deploy Backend Dashboard into React/admin-dashboard/
-    - /bin/mkdir -p $DEPLOYPATH/admin-dashboard # Create admin-dashboard within React
-    - /bin/cp -R Hosting-backend/dist/. $DEPLOYPATH/admin-dashboard/
-
-    # Deploy PHP API into React/php-api/
-    - /bin/mkdir -p $DEPLOYPATH/php-api # Create php-api within React
-    - /bin/cp -R php-api/. $DEPLOYPATH/php-api/
+    # Deploy PHP API into React/api/
+    - /bin/mkdir -p $DEPLOYPATH/api # Ensure api directory exists within React
+    - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/ # Copy contents of api
