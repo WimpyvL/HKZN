@@ -1,12 +1,12 @@
 # Netlify build configuration for the Frontend
 
 [build]
-  # Base directory to change to before starting build commands
-  base = "Hosting-Frontend"
-  # Build command
+  # Base directory for the merged frontend app
+  base = "HKZN-App/frontend"
+  # Build command (defined in frontend's package.json)
   command = "npm run build"
-  # Directory containing the built assets
-  publish = "Hosting-Frontend/dist"
+  # Directory containing the built assets relative to the repository root
+  publish = "HKZN-App/frontend/dist"
 
 # Redirect rule for Single Page Applications (SPA)
 [[redirects]]

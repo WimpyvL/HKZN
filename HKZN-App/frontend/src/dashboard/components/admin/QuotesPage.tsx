@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '@/components/dashboard/Sidebar'; // Import Sidebar
+import Sidebar from '@/dashboard/components/dashboard/Sidebar'; // Corrected path
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"; // Import Button
 import { Badge } from "@/components/ui/badge"; // Re-add Badge import
 import { useToast } from "@/components/ui/use-toast"; // Import useToast
 import { Loader2, AlertCircle, Eye } from 'lucide-react'; // Import Eye icon
-import { QuoteDetailsModal } from '@/components/modals/QuoteDetailsModal'; // Import the modal
+import { QuoteDetailsModal } from '@/dashboard/components/modals/QuoteDetailsModal'; // Corrected path
 
 // Define the structure of a quote object based on get_quotes.php output
 interface ClientDetails {
