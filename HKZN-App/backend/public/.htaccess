@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Set the base path for the rewrite rules
+  RewriteBase /ReactDev/admin-dashboard/
+
+  # Skip rewrite if the request is for an existing file or directory
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L] # Do not rewrite anything further
+
+  # If the request doesn't match an existing file/directory, rewrite to index.html
+  RewriteRule . /ReactDev/admin-dashboard/index.html [L]
+</IfModule>
