@@ -23,6 +23,6 @@ node_modules/
 
 # Build outputs
 build/
-dist/
-HKZN-App/frontend/dist/
-HKZN-App/backend/dist/
+dist/ # Ignore root dist if any
+# HKZN-App/frontend/dist/ # DO NOT ignore frontend dist - needed for cPanel deployment
+# HKZN-App/backend/dist/ # Backend removed
