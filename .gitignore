@@ -23,5 +23,3 @@ node_modules/
 
 # Build outputs
 build/
-dist/ # Ignore dist folders by default
-!HKZN-App/frontend/dist/ # BUT do not ignore the frontend build output needed for cPanel
