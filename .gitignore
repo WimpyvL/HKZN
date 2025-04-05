@@ -20,6 +20,3 @@ logs/
 
 # Dependencies (covered by sub-project gitignores, but good practice)
 node_modules/
-
-# Build outputs
-build/
