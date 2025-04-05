@@ -4,6 +4,9 @@ deployment:
     # Set the deployment path to the React subdirectory
     - export DEPLOYPATH=/home/domkzn/public_html/React
 
+    # Build the frontend application
+    - cd HKZN-App/frontend && npx vite build
+
     # Deploy Frontend (built assets) into the React directory
     - /bin/mkdir -p $DEPLOYPATH # Ensure React directory exists
     - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/ # Copy contents of dist
