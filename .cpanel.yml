@@ -6,23 +6,27 @@ deployment:
     # Define the deployment path on the server
     - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
 
-    # Navigate to the frontend directory, install dependencies, and build
-    - cd HKZN-App/frontend && npm install && npx vite build && cd ../..
-    # List dist contents after build for debugging
-    - echo "--- Listing dist directory contents after build ---"
-    - ls -la HKZN-App/frontend/dist/
-    - echo "--- End listing dist directory ---"
+    # --- FRONTEND BUILD STEPS COMMENTED OUT FOR TESTING ---
+    # - echo "--- Navigating to frontend ---"
+    # - cd HKZN-App/frontend && npm install && npx vite build && cd ../..
+    # - echo "--- Listing dist directory contents after build ---"
+    # - ls -la HKZN-App/frontend/dist/
+    # - echo "--- End listing dist directory ---"
+    # --- END OF COMMENTED OUT SECTION ---
 
     # Prepare the deployment directory on the server (optional: remove previous content)
-    - /bin/rm -rf $DEPLOYPATH/*
+    - echo "--- Preparing deployment directory (API only) ---"
+    - /bin/rm -rf $DEPLOYPATH/* # Note: This will clear the directory
     - /bin/mkdir -p $DEPLOYPATH
 
-    # Deploy Frontend (copy built assets from dist)
-    - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/
-
-    # Explicitly copy .htaccess if it exists in dist, just to be sure
-    - '[ -f HKZN-App/frontend/dist/.htaccess ] && /bin/cp HKZN-App/frontend/dist/.htaccess $DEPLOYPATH/.htaccess || echo ".htaccess not found in dist, skipping explicit copy."'
+    # --- FRONTEND DEPLOYMENT COMMENTED OUT ---
+    # - echo "--- Deploying Frontend (Skipped) ---"
+    # - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/
+    # - '[ -f HKZN-App/frontend/dist/.htaccess ] && /bin/cp HKZN-App/frontend/dist/.htaccess $DEPLOYPATH/.htaccess || echo ".htaccess not found in dist, skipping explicit copy."'
+    # --- END OF COMMENTED OUT SECTION ---
 
     # Deploy PHP API into the api subdirectory
+    - echo "--- Deploying PHP API ---"
     - /bin/mkdir -p $DEPLOYPATH/api
     - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
+    - echo "--- API Deployment Attempt Finished ---"
