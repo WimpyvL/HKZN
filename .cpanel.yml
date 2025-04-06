@@ -8,6 +8,10 @@ deployment:
 
     # Navigate to the frontend directory, install dependencies, and build
     - cd HKZN-App/frontend && npm install && npx vite build && cd ../..
+    # List dist contents after build for debugging
+    - echo "--- Listing dist directory contents after build ---"
+    - ls -la HKZN-App/frontend/dist/
+    - echo "--- End listing dist directory ---"
 
     # Prepare the deployment directory on the server (optional: remove previous content)
     - /bin/rm -rf $DEPLOYPATH/*
