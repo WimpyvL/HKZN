@@ -16,6 +16,9 @@ deployment:
     # Deploy Frontend (copy built assets from dist)
     - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/
 
+    # Explicitly copy .htaccess if it exists in dist, just to be sure
+    - '[ -f HKZN-App/frontend/dist/.htaccess ] && /bin/cp HKZN-App/frontend/dist/.htaccess $DEPLOYPATH/.htaccess || echo ".htaccess not found in dist, skipping explicit copy."'
+
     # Deploy PHP API into the api subdirectory
     - /bin/mkdir -p $DEPLOYPATH/api
     - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
