@@ -1,16 +1,21 @@
 ---
 deployment:
   tasks:
-    # Set the deployment path to the React subdirectory
+    # Exit immediately if a command exits with a non-zero status.
+    - set -e
+    # Define the deployment path on the server
     - export DEPLOYPATH=/home/domkzn/public_html/React
 
-    # Build the frontend application
-    - cd HKZN-App/frontend && npx vite build
+    # Navigate to the frontend directory, install dependencies, and build
+    - cd HKZN-App/frontend && npm install && npx vite build && cd ../..
 
-    # Deploy Frontend (built assets) into the React directory
-    - /bin/mkdir -p $DEPLOYPATH # Ensure React directory exists
-    - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/ # Copy contents of dist
+    # Prepare the deployment directory on the server (optional: remove previous content)
+    - /bin/rm -rf $DEPLOYPATH/*
+    - /bin/mkdir -p $DEPLOYPATH
 
-    # Deploy PHP API into React/api/
-    - /bin/mkdir -p $DEPLOYPATH/api # Ensure api directory exists within React
-    - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/ # Copy contents of api
+    # Deploy Frontend (copy built assets from dist)
+    - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/
+
+    # Deploy PHP API into the api subdirectory
+    - /bin/mkdir -p $DEPLOYPATH/api
+    - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
