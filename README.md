@@ -6,10 +6,9 @@ This repository contains the code for the HKZN website, admin dashboard, and bac
 
 The project is organized as a monorepo using npm workspaces:
 
--   **`/Hosting-Frontend`**: The public-facing website built with React, TypeScript, Vite, and Tailwind CSS (shadcn/ui).
--   **`/Hosting-backend`**: The internal admin/agent dashboard built with React, TypeScript, Vite, and Tailwind CSS (shadcn/ui).
--   **`/php-api`**: A RESTful API built with PHP and MySQLi for data interaction.
--   **`/` (Root)**: Contains workspace configuration (`package.json`), deployment scripts (`.cpanel.yml`), and shared configuration (`.gitignore`).
+-   **`HKZN-App/frontend/`**: The public-facing website built with React, TypeScript, Vite, and Tailwind CSS (shadcn/ui).
+-   **`HKZN-App/api/`**: A RESTful API built with PHP and MySQLi for data interaction.
+-   **`/` (Root)**: Contains deployment scripts (`.cpanel.yml`), and configuration (`.gitignore`, `package.json`). (Note: This doesn't appear to be an npm workspace setup based on current structure).
 
 ## Technology Stack
 
@@ -28,41 +27,38 @@ The project is organized as a monorepo using npm workspaces:
 
 2.  **Install Dependencies:**
     *   Navigate to the root `HKZN` directory in your terminal.
-    *   Run `npm install` (or `npm run install:all`). This installs dependencies for both frontend workspaces into the root `node_modules` folder.
+    *   Run `npm install` in the `HKZN-App/frontend/` directory. (Note: Root `package.json` seems unrelated to the frontend app based on structure).
 
 3.  **Configure Local Environment:**
-    *   **Database:** The PHP API uses `php-api/db_connect.local.php` for local credentials (defaults to user `root`, no password, database `hosting_kzn_db`). This file is ignored by Git.
-    *   **API URL:** Create `.env.development` files in both `Hosting-Frontend` and `Hosting-backend` directories. Add the following line to each, adjusting the URL if your local PHP server serves the API from a different path:
+    *   **Database:** The PHP API likely uses a configuration file within `HKZN-App/api/` (e.g., `db_connect.php`) for credentials. Check that directory for specifics.
+    *   **API URL:** Create a `.env` file in the `HKZN-App/frontend/` directory. Add the following line, adjusting the URL if your local PHP server serves the API from a different path:
         ```
-        VITE_API_BASE_URL=http://localhost/HKZN/php-api
+        VITE_API_BASE_URL=http://localhost/HKZN/HKZN-App/api
         ```
-    *   **Supabase Auth (Backend Only):** If using Supabase for authentication in the backend dashboard locally, ensure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set in `Hosting-backend/.env.development`.
 
 4.  **Run Development Servers:**
-    *   From the root `HKZN` directory, run:
+    *   Navigate to the `HKZN-App/frontend/` directory and run:
         ```bash
-        npm run dev:all
+        npm run dev
         ```
-    *   This will start both frontend apps concurrently:
-        *   Frontend: `http://localhost:8080/`
-        *   Backend Dashboard: `http://localhost:5173/`
+    *   This will start the frontend development server (check terminal output for the specific port, often 5173 or similar).
+    *   Ensure your local web server (e.g., XAMPP Apache) is configured to serve the PHP files from the `HKZN-App/api/` directory.
 
 ## Production Deployment (cPanel Git)
 
 1.  **Build Applications:**
-    *   From the root `HKZN` directory, run:
+    *   Navigate to the `HKZN-App/frontend/` directory and run:
         ```bash
-        npm run build:all
+        npm run build
         ```
-    *   This generates production builds in `Hosting-Frontend/dist` and `Hosting-backend/dist`.
+    *   This generates a production build in `HKZN-App/frontend/dist`.
 
 2.  **Commit Changes:**
-    *   Ensure the `.gitignore` file includes `!Hosting-Frontend/dist/` and `!Hosting-backend/dist/` to allow committing the build folders.
-    *   Add all changes, including the `dist` folders, to Git:
+    *   Ensure the `HKZN-App/frontend/.gitignore` file does *not* ignore the `dist/` directory if you intend to commit the build output (which `.cpanel.yml` seems to rely on). Alternatively, modify the deployment script to build on the server.
+    *   Add all changes, including the `dist` folder if committing it, to Git:
         ```bash
-        git add .
-        # Or more specifically:
-        # git add .gitignore package.json package-lock.json Hosting-Frontend/dist Hosting-backend/dist php-api ... (and any other changed source files)
+        # Example:
+        git add HKZN-App/frontend/dist HKZN-App/api ... (and any other changed source files)
         ```
     *   Commit the changes:
         ```bash
@@ -72,21 +68,21 @@ The project is organized as a monorepo using npm workspaces:
         ```bash
         git push origin Development
         ```
-    *   *Note:* If Git warns about adding ignored files (`dist` folders), you might need to use `git add -f Hosting-Frontend/dist Hosting-backend/dist` for the commit that includes the build output.
+    *   *Note:* If Git warns about adding ignored files (`dist` folder), you might need to use `git add -f HKZN-App/frontend/dist` if it's listed in a higher-level `.gitignore`.
 
 3.  **Deploy via cPanel:**
     *   Log in to cPanel -> Git Version Control.
     *   Manage the `HKZN` repository.
     *   Ensure the correct branch is checked out.
     *   Click "Update from Remote" to pull the latest commit.
-    *   Click "Deploy HEAD Commit". This runs the script in `.cpanel.yml`, copying files to `/home/domkzn/public_html/ReactDev`.
+    *   Click "Deploy HEAD Commit". This runs the script in `.cpanel.yml`, which builds the frontend (if not already built and committed) and copies `HKZN-App/frontend/dist/` and `HKZN-App/api/` files to `/home/domkzn/public_html/ReactDev`.
 
 4.  **Manual Server Configuration:**
     *   Using cPanel File Manager or SSH:
-        *   Create `/home/domkzn/public_html/ReactDev/.env` with `VITE_API_BASE_URL=/ReactDev/php-api`.
-        *   Create `/home/domkzn/public_html/ReactDev/admin-dashboard/.env` with `VITE_API_BASE_URL=/ReactDev/php-api`.
-        *   Edit `/home/domkzn/public_html/ReactDev/php-api/db_connect.php` and set the correct production database password.
-        *   Ensure the production database (`domkzn_maindb`) exists and has the correct schema (including `contact_submissions` table).
+        *   Ensure the web server (Apache/Nginx) is configured correctly to serve the React app (handling routing via `.htaccess` or server config) from `/home/domkzn/public_html/ReactDev`.
+        *   Ensure PHP is configured correctly to run the API scripts in `/home/domkzn/public_html/ReactDev/api`.
+        *   Edit `/home/domkzn/public_html/ReactDev/api/db_connect.php` (or relevant config file) and set the correct production database credentials.
+        *   Ensure the production database (e.g., `domkzn_maindb`) exists and has the correct schema.
         *   Ensure correct file/directory permissions (usually 755 for directories, 644 for files within `public_html`).
 
 5.  **Test:** Clear browser cache and access the site at `https://yourdomain.com/ReactDev/` and the dashboard at `https://yourdomain.com/ReactDev/admin-dashboard/`.
@@ -95,12 +91,9 @@ The project is organized as a monorepo using npm workspaces:
 
 -   `.cpanel.yml`: Defines the cPanel deployment steps.
 -   `.gitignore`: Specifies intentionally untracked files (ensure `dist` folders are un-ignored for deployment).
--   `package.json` (root): Configures npm workspaces and root-level scripts.
--   `Hosting-Frontend/vite.config.ts`: Frontend build config (conditional `base` path).
--   `Hosting-backend/vite.config.ts`: Backend dashboard build config (conditional `base` path).
--   `Hosting-Frontend/public/.htaccess`: Production routing rules for the frontend SPA.
--   `Hosting-backend/public/.htaccess`: Production routing rules for the backend SPA.
--   `php-api/db_connect.php`: Default (production) database credentials and logic to load local overrides.
--   `php-api/db_connect.local.php`: (Optional, ignored by Git) Local database credentials.
--   `.env`: Production environment variables (created manually on server).
--   `.env.development`: Local development environment variables (overrides `.env` during `npm run dev`).
+-   `package.json` (root): Seems to be for root-level dependencies or scripts, not directly managing the frontend app.
+-   `HKZN-App/frontend/package.json`: Manages frontend dependencies and scripts (`dev`, `build`).
+-   `HKZN-App/frontend/vite.config.ts`: Frontend build configuration.
+-   `HKZN-App/frontend/public/.htaccess`: Production routing rules for the frontend SPA.
+-   `HKZN-App/api/db_connect.php`: Likely contains database connection logic (check for production vs. local settings).
+-   `.env` (in `HKZN-App/frontend/`): Used for environment variables like `VITE_API_BASE_URL`. Create manually for local dev or on the server for production (though Vite typically bundles env vars during build, check `vite.config.ts`).

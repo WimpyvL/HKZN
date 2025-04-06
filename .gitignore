@@ -20,3 +20,6 @@ logs/
 
 # Dependencies (covered by sub-project gitignores, but good practice)
 node_modules/
+
+# Uploads / Media (should not be tracked in Git)
+HKZN-App/frontend/public/lovable-uploads/

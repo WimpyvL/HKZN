@@ -11,6 +11,9 @@ lerna-debug.log*
 .env*
 !.env.example
 
+# Build output
+dist/
+
 node_modules
 *.local
 
