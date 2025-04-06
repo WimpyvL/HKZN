@@ -4,7 +4,7 @@ deployment:
     # Exit immediately if a command exits with a non-zero status.
     - set -e
     # Define the deployment path on the server
-    - export DEPLOYPATH=/home/domkzn/public_html/React
+    - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
 
     # Navigate to the frontend directory, install dependencies, and build
     - cd HKZN-App/frontend && npm install && npx vite build && cd ../..

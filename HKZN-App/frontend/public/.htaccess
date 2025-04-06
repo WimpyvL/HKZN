@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteBase /React/ # Set correct base path for deployment
+  RewriteBase /ReactDev/ # Set correct base path for deployment
 
   # Skip rewrite if the request is for an existing file or directory
   RewriteCond %{REQUEST_FILENAME} -f [OR]
@@ -8,5 +8,5 @@
   RewriteRule ^ - [L] # Do not rewrite anything further
 
   # If the request doesn't match an existing file/directory, rewrite to index.html
-  RewriteRule . /React/index.html [L]
+  RewriteRule . /ReactDev/index.html [L]
 </IfModule>
