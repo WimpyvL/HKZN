@@ -9,7 +9,7 @@ import Stats from '../components/home/Stats';
 import Testimonials from '../components/home/Testimonials';
 import CallToAction from '../components/home/CallToAction';
 import { Helmet } from 'react-helmet-async';
-import heroVideo from '/lovable-uploads/Hosting Banners 2025 (3).mp4'; // Import the video
+// Removed incorrect video import: import heroVideo from '/lovable-uploads/Hosting Banners 2025 (3).mp4';
 
 const Index: React.FC = () => {
   return (
@@ -20,11 +20,12 @@ const Index: React.FC = () => {
       </Helmet>
       {/* Video replacing BannerCarousel */}
       <div className="w-full overflow-hidden"> {/* Container to prevent layout shifts if needed */}
-        <video 
-          src={heroVideo} // Use imported variable
-          autoPlay 
-          muted 
-          loop 
+        <video
+          // Reference the video directly using its absolute path from the public directory
+          src="/lovable-uploads/Hosting Banners 2025 (3).mp4" 
+          autoPlay
+          muted
+          loop
           playsInline 
           className="w-full h-auto object-cover" // Adjust height/aspect ratio as needed
         >
