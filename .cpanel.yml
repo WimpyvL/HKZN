@@ -1,0 +1,33 @@
+---
+deployment:
+  tasks:
+    # Exit immediately if a command exits with a non-zero status.
+    - set -e
+    # Define the deployment path on the server
+    - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
+
+    # --- Deploy Frontend ---
+    - echo "--- Deploying Frontend to $DEPLOYPATH ---"
+    # Clear the deployment directory
+    - /bin/rm -rf $DEPLOYPATH/*
+    # Use Git to deploy the code
+    - git clone https://github.com/WimpyvL/HKZN.git $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - git checkout production
+    # Build the frontend
+    - cd HKZN-App/frontend
+    - npm install
+    - npm run build
+    # Deploy the frontend files
+    - /bin/cp -R dist/. $DEPLOYPATH
+    # Deploy the .htaccess file
+    - /bin/cp HKZN-App/frontend/public/.htaccess $DEPLOYPATH/.htaccess
+
+    # --- Deploy PHP API ---
+    - echo "--- Deploying PHP API to $DEPLOYPATH/api ---"
+    # Create the API directory
+    - /bin/mkdir -p $DEPLOYPATH/api
+    # Deploy the API files
+    - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
+
+    - echo "--- Deployment script finished ---"

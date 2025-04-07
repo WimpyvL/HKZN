@@ -3,7 +3,6 @@ import React, { ReactNode, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
-import { Chatbot } from '../common/Chatbot'; // Import the Chatbot component
 
 interface LayoutProps {
   children: ReactNode;
@@ -25,7 +24,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {children}
       </main>
       <Footer />
-      <Chatbot /> {/* Add the Chatbot component here */}
     </div>
   );
 };
