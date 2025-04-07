@@ -6,7 +6,7 @@
   # Build command to execute
   command = "npm run build"
   # Directory containing the built static files, relative to the base directory
-  publish = "HKZN-App/frontend/dist"
+  publish = "dist" # Corrected path relative to 'base'
 
 [build.environment]
   # Set the Node.js version Netlify should use (Optional, but recommended)
