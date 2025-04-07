@@ -9,9 +9,6 @@ deployment:
     # --- Build Frontend ---
     - echo "--- Navigating to frontend ---"
     - cd HKZN-App/frontend
-    - echo "--- Starting npm install ---"
-    - npm install
-    - echo "--- Finished npm install ---"
     - echo "--- Starting vite build ---"
     - npx vite build
     - echo "--- Finished vite build ---"

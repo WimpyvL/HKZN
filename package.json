@@ -1,11 +1,38 @@
 {
-  "name": "hkzn-monorepo",
+  "name": "Hosting KZN",
+  "homepage": "https://hostingkzn.com/public_html/ReactDev",
   "version": "1.0.0",
   "private": true,
   "description": "Root package for HKZN project, defining the workspace.",
   "workspaces": [
     "HKZN-App/frontend"
   ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node HKZN-App/frontend/server.js",
+    "build": "cd HKZN-App/frontend && npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "HKZN",
+    "Hosting",
+    "KZN",
+    "Node.js",
+    "Express",
+    "MongoDB"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WimpyvL/HKZN.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WimpyvL/HKZN/issues"
+  },
   "author": "",
   "license": "ISC"
 }
