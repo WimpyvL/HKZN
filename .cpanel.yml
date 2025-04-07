@@ -6,36 +6,28 @@ deployment:
     # Define the deployment path on the server
     - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
 
-    # --- Build Frontend ---
-    - echo "--- Navigating to frontend ---"
-    - cd HKZN-App/frontend
-    - echo "--- Starting vite build ---"
-    - npx vite build
-    - echo "--- Finished vite build ---"
-    - cd ../.. # Go back to the repository root
-    - echo "--- Listing dist directory contents after build ---"
-    - ls -la HKZN-App/frontend/dist/
-    - echo "--- End listing dist directory ---"
-
-    # --- Prepare Deployment Directory ---
-    - echo "--- Preparing deployment directory: $DEPLOYPATH ---"
-    # Ensure the main deployment directory exists
-    - /bin/mkdir -p $DEPLOYPATH
-    # Optionally clear previous frontend/API content if needed (be careful with this)
-    # - /bin/rm -rf $DEPLOYPATH/* # Uncomment cautiously if you want a clean deploy each time
-
     # --- Deploy Frontend ---
     - echo "--- Deploying Frontend to $DEPLOYPATH ---"
-    # Clear only previous frontend assets, leave API untouched if rm -rf * was not used above
-    - /bin/rm -rf $DEPLOYPATH/assets $DEPLOYPATH/index.html $DEPLOYPATH/.htaccess $DEPLOYPATH/favicon.ico # Add other specific frontend files/dirs if needed
-    - /bin/cp -R HKZN-App/frontend/dist/. $DEPLOYPATH/
-    # Explicitly copy .htaccess again just in case cp -R didn't overwrite correctly or if it wasn't in dist
-    - '[ -f HKZN-App/frontend/dist/.htaccess ] && /bin/cp HKZN-App/frontend/dist/.htaccess $DEPLOYPATH/.htaccess || echo ".htaccess not found in dist, skipping explicit copy."'
+    # Clear the deployment directory
+    - /bin/rm -rf $DEPLOYPATH/*
+    # Use Git to deploy the code
+    - git clone https://github.com/WimpyvL/HKZN.git $DEPLOYPATH
+    - cd $DEPLOYPATH
+    - git checkout production
+    # Build the frontend
+    - cd HKZN-App/frontend
+    - npm install
+    - npm run build
+    # Deploy the frontend files
+    - /bin/cp -R dist/. $DEPLOYPATH
+    # Deploy the .htaccess file
+    - /bin/cp HKZN-App/frontend/public/.htaccess $DEPLOYPATH/.htaccess
 
     # --- Deploy PHP API ---
     - echo "--- Deploying PHP API to $DEPLOYPATH/api ---"
-    - /bin/mkdir -p $DEPLOYPATH/api # Ensure the api subdirectory exists
-    # Clear previous API files before copying new ones
-    - /bin/rm -rf $DEPLOYPATH/api/*
+    # Create the API directory
+    - /bin/mkdir -p $DEPLOYPATH/api
+    # Deploy the API files
     - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
+
     - echo "--- Deployment script finished ---"
