@@ -3,31 +3,27 @@ deployment:
   tasks:
     # Exit immediately if a command exits with a non-zero status.
     - set -e
-    # Define the deployment path on the server
-    - export DEPLOYPATH=/home/domkzn/public_html/ReactDev
+    # Define paths
+    - export APP_PATH=/home/domkzn/hkznapp # Node.js application directory
+    - export WEB_ROOT=/home/domkzn/public_html # Web server root
+    - export REPO_URL=https://github.com/WimpyvL/HKZN.git
+    - export BRANCH=production
 
-    # --- Deploy Frontend ---
-    - echo "--- Deploying Frontend to $DEPLOYPATH ---"
-    # Clear the deployment directory
-    - /bin/rm -rf $DEPLOYPATH/*
-    # Use Git to deploy the code
-    - git clone https://github.com/WimpyvL/HKZN.git $DEPLOYPATH
-    - cd $DEPLOYPATH
-    - git checkout production
-    # Build the frontend
-    - cd HKZN-App/frontend
+    # --- Deploy/Update Node.js App ---
+    - echo "--- Deploying Node.js App to $APP_PATH ---"
+    # Check if directory exists, clone if not, pull if it does
+    - if [ -d "$APP_PATH/.git" ]; then cd $APP_PATH && git pull origin $BRANCH; else git clone --branch $BRANCH $REPO_URL $APP_PATH; fi
+    - cd $APP_PATH/HKZN-App/frontend
+    # Install dependencies and build frontend
     - npm install
     - npm run build
-    # Deploy the frontend files
-    - /bin/cp -R dist/. $DEPLOYPATH
-    # Deploy the .htaccess file
-    - /bin/cp HKZN-App/frontend/public/.htaccess $DEPLOYPATH/.htaccess
+    # Node.js app is now ready for cPanel Node.js manager to start
 
     # --- Deploy PHP API ---
-    - echo "--- Deploying PHP API to $DEPLOYPATH/api ---"
-    # Create the API directory
-    - /bin/mkdir -p $DEPLOYPATH/api
-    # Deploy the API files
-    - /bin/cp -R HKZN-App/api/. $DEPLOYPATH/api/
+    - echo "--- Deploying PHP API to $WEB_ROOT/api ---"
+    # Create the API directory in the web root
+    - /bin/mkdir -p $WEB_ROOT/api
+    # Deploy the API files from the cloned repo
+    - /bin/cp -R $APP_PATH/HKZN-App/api/. $WEB_ROOT/api/
 
     - echo "--- Deployment script finished ---"
