@@ -52,7 +52,7 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename="/ReactDev">
+      <BrowserRouter> {/* Removed basename="/ReactDev" */}
         <HelmetProvider>
           <AuthProvider>
             <TooltipProvider>
