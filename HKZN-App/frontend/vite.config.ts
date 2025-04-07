@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({ // Add command to destructuring
-  base: command === 'build' ? '/ReactDev/' : '/', // Set base to '/ReactDev/' for build, '/' for dev
+  base: command === 'build' ? '/' : '/', // Set base to '/' for both build and dev for standard Netlify deployment
   server: {
     host: "::",
     port: 8080,
