@@ -1,3 +1,7 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
 # Environment variables
 .env
 .env.*
@@ -6,20 +10,29 @@
 # Local PHP Config Overrides
 HKZN-App/api/db_connect.local.php
 
+# Build Output (Netlify builds this, so ignore local build)
+HKZN-App/frontend/dist/
+
 # IDE specific
 .idea/
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
 
 # OS specific
 .DS_Store
 Thumbs.db
+*.swp
 
 # Logs
 *.log
 logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Dependencies (covered by sub-project gitignores, but good practice)
-node_modules/
-
-# Uploads / Media (should not be tracked in Git)
-HKZN-App/frontend/public/lovable-uploads/
+# Other
+*.local
+core # Added by backend, ignore if not needed
