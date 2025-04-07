@@ -1,0 +1,23 @@
+# Netlify configuration for the HKZN Frontend
+
+[build]
+  # Directory where Netlify should run the build command
+  base = "HKZN-App/frontend"
+  # Build command to execute
+  command = "npm run build"
+  # Directory containing the built static files, relative to the base directory
+  publish = "HKZN-App/frontend/dist"
+
+[build.environment]
+  # Set the Node.js version Netlify should use (Optional, but recommended)
+  # Check Netlify docs for currently supported versions. Example:
+  # NODE_VERSION = "18"
+  # Set environment variables needed during build (e.g., API keys)
+  # VITE_API_BASE_URL = "YOUR_PRODUCTION_API_URL" # Example - Set this in Netlify UI instead for secrets
+
+# Redirect rule for Single Page Applications (SPA)
+# This ensures that direct navigation to routes like /about-us works correctly
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
