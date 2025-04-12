@@ -5,57 +5,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import useAuth from '@/contexts/auth/useAuth'; // Using placeholder hook
+import useAuth from '@/contexts/auth/useAuth'; // Import the updated hook
 import { Loader2 } from 'lucide-react';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  // Add other fields if needed (e.g., name)
-  const [loading, setLoading] = useState(false);
+  // Use loading state from the auth context
+  const { register, loading: authLoading } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false); // Local submitting state
+
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { register } = useAuth(); // Using placeholder register
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       toast({ title: "Registration Error", description: "Passwords do not match.", variant: "destructive" });
       return;
     }
-    setLoading(true);
-    console.log("Attempting registration (placeholder)...");
+    // Consider adding password strength validation here if needed
 
-    // Call the PHP registration endpoint via Apache
+    setIsSubmitting(true);
+
     try {
-      // Call the PHP endpoint via Apache
-      const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/register.php`;
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({ email, password }), // Send email and password
-      });
+      // Call the register function from the AuthContext
+      // AuthProvider handles the global loading state
+      const error = await register({ email, password }); // Call Supabase register
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || `HTTP error! status: ${response.status}`);
+      if (error) {
+        throw error; // Throw error to be caught below
       }
 
-      // Registration successful
+      // Registration successful (or initiated if email confirmation is required)
       toast({
         title: "Registration Successful",
-        description: result.message || "You can now log in.", // Use message from backend if available
+        description: "Please check your email for a confirmation link (if required) or proceed to login.",
       });
       navigate("/auth/login"); // Redirect to login page
 
     } catch (error: unknown) {
       let errorMessage = "Registration failed. Please try again.";
       if (error instanceof Error) {
+        // Use Supabase error message
         errorMessage = error.message;
       }
       toast({
@@ -64,9 +57,12 @@ const Register: React.FC = () => {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsSubmitting(false); // Reset local submitting state
     }
   };
+
+  // Determine if the button should be disabled
+  const isButtonDisabled = authLoading || isSubmitting;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -75,7 +71,7 @@ const Register: React.FC = () => {
           <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>Create your account</CardDescription>
         </CardHeader>
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleRegisterSubmit}>
           <CardContent className="space-y-4">
             {/* Add Name fields if needed */}
             <div className="space-y-2">
@@ -87,7 +83,7 @@ const Register: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loading}
+                disabled={isButtonDisabled}
               />
             </div>
             <div className="space-y-2">
@@ -98,7 +94,8 @@ const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={loading}
+                minLength={6} // Example: Enforce minimum length
+                disabled={isButtonDisabled}
               />
             </div>
              <div className="space-y-2">
@@ -109,13 +106,13 @@ const Register: React.FC = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                disabled={loading}
+                disabled={isButtonDisabled}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={loading}>
-               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full" disabled={isButtonDisabled}>
+               {(authLoading || isSubmitting) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Register
             </Button>
              <p className="text-center text-sm text-gray-600">

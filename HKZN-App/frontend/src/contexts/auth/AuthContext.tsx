@@ -1,24 +1,23 @@
 import React from 'react';
+import type { Session, User as SupabaseUser } from '@supabase/supabase-js';
+import type { Profile, Credentials } from '@/types'; // Import Profile and Credentials
 
-// Define the User type (matching AuthProvider)
-interface User {
-  id: number;
-  email: string;
-  role: 'user' | 'admin' | 'agent';
-}
-
-// Define the actual context type
+// Define the actual context type based on AuthProvider's value
 interface AuthContextType {
-  user: User | null;
+  session: Session | null;
+  user: SupabaseUser | null; // Use SupabaseUser type (id is string)
+  profile: Profile | null; // Re-added profile state to context type
   loading: boolean;
-  login: (...args: unknown[]) => Promise<void>;
-  logout: () => Promise<void>; // Logout likely doesn't need args here
-  register: (...args: unknown[]) => Promise<void>;
-  isAdmin: boolean; // Add isAdmin flag
-  isAgent: boolean; // Add isAgent flag
+  login: (credentials: Credentials) => Promise<Error | null>; // Return Error or null
+  logout: () => Promise<void>;
+  register: (credentials: Credentials) => Promise<Error | null>; // Return Error or null
+  isAdmin: boolean;
+  isAgent: boolean;
 }
 
-// Create the context with the correct type
+// Create the context with the correct type, initializing to null
+// We could provide default values matching the initial state in AuthProvider if needed,
+// but null is common for contexts that require a Provider wrapper.
 const AuthContext = React.createContext<AuthContextType | null>(null);
 
 export default AuthContext;

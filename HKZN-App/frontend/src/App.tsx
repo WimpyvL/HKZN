@@ -30,6 +30,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ServiceWizardPage from "./pages/ServiceWizard";
+import ProfilePage from "./pages/Profile"; // Import the new Profile page
 
 // --- Dashboard Imports (adjust paths) ---
 import AdminHome from "./dashboard/components/home"; // Renamed to avoid conflict with frontend Home/Index
@@ -83,6 +84,9 @@ const App = () => {
                 {/* Auth routes */}
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/register" element={<Register />} />
+
+                {/* --- Protected Routes (Require Login) --- */}
+                <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
                 {/* --- Admin Dashboard Routes --- */}
                 <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHome /></ProtectedRoute>} />

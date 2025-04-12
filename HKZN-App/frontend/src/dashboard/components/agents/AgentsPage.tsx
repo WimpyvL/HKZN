@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"; // Import useEffect, useCallback
+import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import SearchBar from "../dashboard/SearchBar";
 import {
@@ -12,45 +12,31 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Sidebar from "../dashboard/Sidebar";
-// import { useStore, Agent } from "@/lib/store"; // Remove useStore
 import AgentFormModal from "../modals/AgentFormModal";
 import ViewDetailsModal from "../modals/ViewDetailsModal";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert
-import { Loader2, AlertCircle } from 'lucide-react'; // Import Loader/Icons
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2, AlertCircle } from 'lucide-react';
 import ConfirmDialog from "../modals/ConfirmDialog";
-import { toast } from "@/components/ui/use-toast"; // Import toast for temporary messages
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client"; // Import Supabase client
 
-// Define Agent type locally based on lib/store.ts and get_agents.php output
+// Define Agent type matching Supabase 'agents' table structure
 interface Agent {
-  id: string | number;
+  id: string; // Supabase uses UUID (string)
   name: string;
-  email: string; // Assuming email comes from users table join eventually
-  phone?: string;
-  referralCode: string; // Mapped from referral_code
-  activeClients?: number;
-  totalSales?: number;
-  commission_rate: number; // From API
-  status?: "active" | "inactive" | "pending";
-  joinDate?: string; // Mapped from join_date
-  created_at?: string;
-}
-
-// Define ApiAgent type for raw data mapping
-interface ApiAgent {
-  id: string | number;
-  name: string;
-  email?: string | null; // Email might be null from API
+  email: string;
   phone?: string | null;
-  referral_code: string; // snake_case from API
-  active_clients?: number | string | null; // snake_case from API
-  total_sales?: number | string | null; // snake_case from API
-  commission_rate: string | number; // snake_case from API
+  referral_code: string; // snake_case from Supabase
+  active_clients?: number | null; // snake_case from Supabase
+  total_sales?: number | null; // snake_case from Supabase
+  commission_rate: number; // snake_case from Supabase
   status?: "active" | "inactive" | "pending";
-  join_date?: string | null; // snake_case from API
+  join_date?: string | null; // snake_case from Supabase
   created_at?: string;
+  updated_at?: string;
 }
 
-// Type expected by AgentFormModal (from lib/store.ts) for editing/viewing
+// Type expected by AgentFormModal (camelCase)
 interface ModalAgent {
     id: string;
     name: string;
@@ -59,53 +45,35 @@ interface ModalAgent {
     referralCode: string;
     activeClients: number;
     totalSales: number;
-    commissionRate: number; // Modal expects camelCase
+    commissionRate: number;
     status: "active" | "inactive" | "pending";
     joinDate: string;
 }
 
-
-// Removed unused AgentsPageProps interface
-
-const AgentsPage = () => { // Removed unused props parameter
-
-  // Add state for agents, loading, error
+const AgentsPage = () => {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Get API base URL from environment variables
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-  // Define fetchAgents using useCallback to avoid re-creating it on every render
+  // Fetch agents from Supabase
   const fetchAgents = useCallback(async () => {
     setLoading(true);
     setError(null);
+    console.log("Fetching agents from Supabase...");
     try {
-      const response = await fetch(`${apiBaseUrl}/get_agents.php`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const { data, error: supabaseError } = await supabase
+        .from('agents')
+        .select('*') // Select all columns
+        .order('name'); // Order by name
+
+      if (supabaseError) {
+        throw supabaseError;
       }
-      const result = await response.json();
-      if (!result.success) {
-        throw new Error(result.message || 'Failed to fetch agents.');
-      }
-      // Map API data (snake_case) to local Agent type
-      const fetchedAgents = Array.isArray(result.data) ? result.data.map((a: ApiAgent) => ({ // Use ApiAgent type
-        id: a.id,
-        name: a.name,
-        email: a.email ?? 'N/A',
-        phone: a.phone ?? '',
-        referralCode: a.referral_code,
-        activeClients: Number(a.active_clients ?? 0), // Ensure number
-        totalSales: Number(a.total_sales ?? 0), // Ensure number
-        commission_rate: Number(a.commission_rate), // Ensure number
-        status: a.status ?? 'active',
-        joinDate: a.join_date ?? (a.created_at ? a.created_at.split(' ')[0] : new Date().toISOString().split('T')[0]),
-        created_at: a.created_at,
-      })) : [];
-      setAgents(fetchedAgents);
+
+      console.log("Agents fetched:", data);
+      setAgents(data || []); // Set data or empty array if null
+
     } catch (err: unknown) {
       let errorMessage = 'An unknown error occurred while fetching agents.';
       if (err instanceof Error) {
@@ -117,27 +85,27 @@ const AgentsPage = () => { // Removed unused props parameter
     } finally {
       setLoading(false);
     }
-  }, [apiBaseUrl]); // Dependency: apiBaseUrl
+  }, []); // No dependencies needed now
 
   // Initial fetch on component mount
   useEffect(() => {
     fetchAgents();
-  }, [fetchAgents]); // Dependency: fetchAgents function
+  }, [fetchAgents]);
 
   // Keep state for modals, selection etc.
-  const [selectedAgentId, setSelectedAgentId] = useState<string | number | null>(null);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null); // ID is string (UUID)
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [editingAgent, setEditingAgent] = useState<ModalAgent | null>(null);
   const [showViewDetails, setShowViewDetails] = useState(false);
   const [viewingAgent, setViewingAgent] = useState<ModalAgent | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [agentToDelete, setAgentToDelete] = useState<string | number | null>(null);
+  const [agentToDelete, setAgentToDelete] = useState<string | null>(null); // ID is string (UUID)
 
   // Filter agents based on search query
   const filteredAgents = agents.filter(agent =>
     agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     agent.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (agent.referralCode && agent.referralCode.toLowerCase().includes(searchQuery.toLowerCase()))
+    (agent.referral_code && agent.referral_code.toLowerCase().includes(searchQuery.toLowerCase())) // Use snake_case
   );
 
   const getStatusColor = (status: Agent["status"]) => {
@@ -153,18 +121,18 @@ const AgentsPage = () => { // Removed unused props parameter
     }
   };
 
-  // Helper to convert API Agent to ModalAgent
+  // Helper to convert Supabase Agent (snake_case) to ModalAgent (camelCase)
   const convertToModalAgent = (agent: Agent): ModalAgent => ({
-      id: String(agent.id),
+      id: agent.id,
       name: agent.name,
       email: agent.email,
       phone: agent.phone ?? '',
-      referralCode: agent.referralCode,
-      activeClients: agent.activeClients ?? 0,
-      totalSales: agent.totalSales ?? 0,
-      commissionRate: agent.commission_rate, // Map snake_case to camelCase
+      referralCode: agent.referral_code, // Map from snake_case
+      activeClients: agent.active_clients ?? 0, // Map from snake_case
+      totalSales: agent.total_sales ?? 0, // Map from snake_case
+      commissionRate: agent.commission_rate, // Map from snake_case
       status: agent.status ?? 'active',
-      joinDate: agent.joinDate ?? (agent.created_at ? agent.created_at.split(' ')[0] : new Date().toISOString().split('T')[0]),
+      joinDate: agent.join_date ?? (agent.created_at ? agent.created_at.split('T')[0] : new Date().toISOString().split('T')[0]), // Map from snake_case
   });
 
 
@@ -185,7 +153,7 @@ const AgentsPage = () => { // Removed unused props parameter
     setShowViewDetails(true);
   };
 
-  const handleDeleteAgent = (id: string | number) => {
+  const handleDeleteAgent = (id: string) => { // ID is string
     toast({ title: "Info", description: "Delete agent functionality needs backend integration." });
     // setAgentToDelete(id);
     // setShowDeleteConfirm(true);
@@ -204,7 +172,7 @@ const AgentsPage = () => { // Removed unused props parameter
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold">Agents</h1>
-            <Button onClick={handleAddAgent}>Add New Agent</Button> {/* Enable button */}
+            <Button onClick={handleAddAgent}>Add New Agent</Button>
           </div>
 
           <Card className="w-full bg-white p-6">
@@ -221,7 +189,6 @@ const AgentsPage = () => { // Removed unused props parameter
               />
             </div>
 
-            {/* Add Loading and Error states */}
             {loading && (
               <div className="flex justify-center items-center py-10">
                 <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
@@ -269,17 +236,17 @@ const AgentsPage = () => { // Removed unused props parameter
                             {agent.name}
                           </TableCell>
                           <TableCell>{agent.email}</TableCell>
-                          <TableCell>{agent.referralCode}</TableCell>
-                          <TableCell>{agent.activeClients ?? 0}</TableCell>
+                          <TableCell>{agent.referral_code}</TableCell> {/* Use snake_case */}
+                          <TableCell>{agent.active_clients ?? 0}</TableCell> {/* Use snake_case */}
                           <TableCell>
-                            R {agent.totalSales?.toLocaleString() ?? 0}
+                            R {agent.total_sales?.toLocaleString() ?? 0} {/* Use snake_case */}
                           </TableCell>
                           <TableCell>
-                            {(agent.commission_rate * 100).toFixed(1)}%
+                            {(agent.commission_rate * 100).toFixed(1)}% {/* Use snake_case */}
                           </TableCell>
                           <TableCell>
                             <Badge
-                              variant="secondary"
+                              variant={"secondary" as const} // Explicit cast
                               className={getStatusColor(agent.status)}
                             >
                               {agent.status?.charAt(0).toUpperCase() +
@@ -289,7 +256,7 @@ const AgentsPage = () => { // Removed unused props parameter
                           <TableCell>
                             <div className="flex space-x-2">
                               <Button
-                                variant="outline"
+                                variant={"outline" as const} // Explicit cast
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -299,7 +266,7 @@ const AgentsPage = () => { // Removed unused props parameter
                                 View
                               </Button>
                               <Button
-                                variant="outline"
+                                variant={"outline" as const} // Explicit cast
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -310,7 +277,7 @@ const AgentsPage = () => { // Removed unused props parameter
                                 Edit (WIP)
                               </Button>
                               <Button
-                                variant="destructive"
+                                variant={"destructive" as const} // Explicit cast
                                 size="sm"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -328,7 +295,7 @@ const AgentsPage = () => { // Removed unused props parameter
                   </TableBody>
                 </Table>
               </div>
-            )} {/* End loading/error check */}
+            )}
           </Card>
         </div>
       </main>
@@ -338,19 +305,18 @@ const AgentsPage = () => { // Removed unused props parameter
         open={showAgentForm}
         onClose={() => setShowAgentForm(false)}
         agent={editingAgent}
-        onAgentAdded={fetchAgents} // Use fetchAgents directly for refetch
+        onAgentAdded={fetchAgents} // Refetch after adding
       />
 
       <ViewDetailsModal
         open={showViewDetails}
         onClose={() => setShowViewDetails(false)}
         title="Agent Details"
-        data={viewingAgent || {}}
+        data={(viewingAgent as unknown as Record<string, unknown>) || {}} // Cast via unknown
         onEdit={() => {
           setShowViewDetails(false);
           if (viewingAgent) {
-             // Need to find the original agent data to pass to handleEditAgent
-             const originalAgent = agents.find(a => String(a.id) === viewingAgent.id);
+             const originalAgent = agents.find(a => a.id === viewingAgent.id);
              if (originalAgent) {
                 handleEditAgent(originalAgent);
              }

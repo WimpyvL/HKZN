@@ -1,17 +1,20 @@
 
-export type UserRole = 'admin' | 'agent';
+export type UserRole = 'client' | 'admin' | 'agent'; // Added 'client'
 
-export interface Profile {
-  id: string;
+export interface Credentials {
   email: string;
+  password: string;
+}
+
+// Updated Profile interface to match the new 'profiles' table
+export interface Profile {
+  id: string; // Matches auth.users.id
   first_name: string | null;
   last_name: string | null;
-  role: UserRole;
-  phone: string | null;
-  address: string | null;
-  commission_rate: number;
+  role: UserRole; // 'client', 'admin', 'agent'
   created_at: string;
   updated_at: string;
+  // Removed: email, phone, address, commission_rate (not in the new profiles table)
 }
 
 export interface Client {

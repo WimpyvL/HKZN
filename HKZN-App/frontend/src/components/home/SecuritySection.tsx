@@ -44,9 +44,9 @@ const SecuritySection: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="animate-fade-up">
             <div className="relative">
-              <img 
-                src="public/lovable-uploads/1618c6a8-2676-4ce0-9e99-7d65f17477f7.png" 
-                alt="Security Services" 
+              <img
+                src="/lovable-uploads/1618c6a8-2676-4ce0-9e99-7d65f17477f7.png"
+                alt="Security Services"
                 className="w-full max-w-md mx-auto rounded-lg shadow-xl"
               />
               
